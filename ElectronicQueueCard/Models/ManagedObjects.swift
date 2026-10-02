@@ -31,6 +31,10 @@ public class Player: NSManagedObject {
     @NSManaged public var lastSeenAt: Date
 }
 
+extension Player: Identifiable {
+    public var id: UUID { uid }
+}
+
 @objc(Guest)
 public class Guest: NSManagedObject {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Guest> {
