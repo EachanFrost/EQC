@@ -21,10 +21,7 @@ struct QRCodeDisplayView: View {
                         .background(Color.white)
                         .cornerRadius(12)
                 }
-                VStack(spacing: 4) {
-                    Text(player.nickname).font(.headline)
-                    Text(player.avatar).font(.largeTitle)
-                }
+                Text(player.nickname).font(.headline)
                 Text("请用手机拍照保存此二维码。下次排队时，出示给屏幕摄像头扫码即可登录。")
                     .font(.footnote).foregroundColor(.secondary)
                     .multilineTextAlignment(.center)

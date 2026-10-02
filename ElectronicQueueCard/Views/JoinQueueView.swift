@@ -14,12 +14,9 @@ struct JoinQueueView: View {
     var body: some View {
         Form {
             Section {
-                HStack(spacing: 10) {
-                    Text(player.avatar).font(.largeTitle)
-                    VStack(alignment: .leading) {
-                        Text(player.nickname).font(.headline)
-                        Text("选择机台与模式开始排队").font(.footnote).foregroundColor(.secondary)
-                    }
+                VStack(alignment: .leading) {
+                    Text(player.nickname).font(.headline)
+                    Text("选择机台与模式开始排队").font(.footnote).foregroundColor(.secondary)
                 }
             }
             Section("机台") {

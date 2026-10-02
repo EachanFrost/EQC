@@ -10,9 +10,7 @@ struct ServiceError: Error {
 struct PlayerService {
     let context: NSManagedObjectContext
 
-    static let avatars = ["🐱", "🐶", "🐰", "🦊", "🐼", "🐯", "🦁", "🐸", "🐵", "🐙", "🦄", "🐲", "🐳", "🦉", "🐢", "🦖"]
-
-    func register(nickname: String, pin: String, avatar: String) -> Result<Player, ServiceError> {
+    func register(nickname: String, pin: String) -> Result<Player, ServiceError> {
         let normalized = nickname.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !normalized.isEmpty else { return .failure(ServiceError(message: "昵称不能为空")) }
         let digits = CharacterSet.decimalDigits
@@ -27,7 +25,7 @@ struct PlayerService {
         player.nickname = normalized
         player.pinHash = PINHasher.hash(pin)
         player.qrSecret = UUID().uuidString
-        player.avatar = avatar
+        player.avatar = ""
         player.createdAt = Date()
         player.lastSeenAt = Date()
         try? context.save()

@@ -74,8 +74,10 @@ struct CameraScannerView: UIViewControllerRepresentable {
             guard session == nil else { return }
             let session = AVCaptureSession()
             self.session = session
-            guard let device = AVCaptureDevice.default(for: .video),
-                  let input = try? AVCaptureDeviceInput(device: device),
+            let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+                ?? AVCaptureDevice.default(for: .video)
+            guard let camera = camera,
+                  let input = try? AVCaptureDeviceInput(device: camera),
                   session.canAddInput(input) else {
                 show(message: "无法访问摄像头", on: vc)
                 return

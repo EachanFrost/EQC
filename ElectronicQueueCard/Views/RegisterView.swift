@@ -1,38 +1,23 @@
 import SwiftUI
 import CoreData
 
-/// 新玩家注册：昵称、头像、PIN，成功后展示二维码。
+/// 新玩家注册：昵称 + PIN，成功后展示二维码。
 struct RegisterView: View {
     @EnvironmentObject var queueManager: QueueManager
     @Environment(\.dismiss) var dismiss
 
     @State private var nickname = ""
-    @State private var avatar = PlayerService.avatars[0]
     @State private var pin = ""
     @State private var pinConfirm = ""
     @State private var message: String?
     @State private var showMessage = false
     @State private var newPlayer: Player?
 
-    private let columns = Array(repeating: GridItem(.flexible()), count: 6)
-
     var body: some View {
         NavigationView {
             Form {
                 Section("昵称") {
                     TextField("输入昵称", text: $nickname)
-                }
-                Section("选择头像") {
-                    LazyVGrid(columns: columns, spacing: 8) {
-                        ForEach(PlayerService.avatars, id: \.self) { a in
-                            Text(a)
-                                .font(.largeTitle)
-                                .padding(4)
-                                .background(avatar == a ? Color.blue.opacity(0.3) : Color.clear)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                .onTapGesture { avatar = a }
-                        }
-                    }
                 }
                 Section("设置 PIN（4-6 位数字）") {
                     SecureField("PIN", text: $pin).keyboardType(.numberPad)
@@ -66,7 +51,7 @@ struct RegisterView: View {
             message = "两次 PIN 不一致"; showMessage = true; return
         }
         let service = PlayerService(context: queueManager.context)
-        switch service.register(nickname: trimmed, pin: pin, avatar: avatar) {
+        switch service.register(nickname: trimmed, pin: pin) {
         case .success(let player): newPlayer = player
         case .failure(let err): message = err.message; showMessage = true
         }
