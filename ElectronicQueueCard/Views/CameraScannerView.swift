@@ -21,6 +21,12 @@ struct ScannerSheet: View {
     }
 }
 
+/// 用 AVCaptureVideoPreviewLayer 作为 backing layer 的视图，随视图自动缩放。
+final class PreviewView: UIView {
+    override class var layerClass: AnyClass { AVCaptureVideoPreviewLayer.self }
+    var videoPreviewLayer: AVCaptureVideoPreviewLayer { layer as! AVCaptureVideoPreviewLayer }
+}
+
 /// AVFoundation 二维码扫描（离线）。
 struct CameraScannerView: UIViewControllerRepresentable {
     let onScan: (String) -> Void
@@ -81,11 +87,13 @@ struct CameraScannerView: UIViewControllerRepresentable {
                 output.setMetadataObjectsDelegate(self, queue: .main)
                 output.metadataObjectTypes = [.qr]
             }
-            let preview = AVCaptureVideoPreviewLayer(session: session)
-            preview.videoGravity = .resizeAspectFill
-            preview.frame = vc.view.layer.bounds
-            preview.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-            vc.view.layer.addSublayer(preview)
+
+            let previewView = PreviewView(frame: vc.view.bounds)
+            previewView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            previewView.videoPreviewLayer.session = session
+            previewView.videoPreviewLayer.videoGravity = .resizeAspectFill
+            vc.view.addSubview(previewView)
+
             DispatchQueue.global(qos: .userInitiated).async { session.startRunning() }
         }
 

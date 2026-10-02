@@ -75,7 +75,7 @@ struct IdentifyView: View {
         let service = PlayerService(context: queueManager.context)
         switch service.login(nickname: nickname, pin: pin) {
         case .success(let p): act(player: p)
-        case .failure(let err): message = err; showMessage = true
+        case .failure(let err): message = err.message; showMessage = true
         }
     }
 

@@ -1,21 +1,26 @@
 import Foundation
 import CoreData
 
+/// 业务错误，携带可展示的中文信息。
+struct ServiceError: Error {
+    let message: String
+}
+
 /// 注册玩家：昵称 + 头像 + PIN，生成专属二维码。
 struct PlayerService {
     let context: NSManagedObjectContext
 
     static let avatars = ["🐱", "🐶", "🐰", "🦊", "🐼", "🐯", "🦁", "🐸", "🐵", "🐙", "🦄", "🐲", "🐳", "🦉", "🐢", "🦖"]
 
-    func register(nickname: String, pin: String, avatar: String) -> Result<Player, String> {
+    func register(nickname: String, pin: String, avatar: String) -> Result<Player, ServiceError> {
         let normalized = nickname.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !normalized.isEmpty else { return .failure("昵称不能为空") }
+        guard !normalized.isEmpty else { return .failure(ServiceError(message: "昵称不能为空")) }
         let digits = CharacterSet.decimalDigits
         guard pin.count >= 4, pin.count <= 6,
               pin.rangeOfCharacter(from: digits.inverted) == nil else {
-            return .failure("PIN 需为 4-6 位数字")
+            return .failure(ServiceError(message: "PIN 需为 4-6 位数字"))
         }
-        guard find(nickname: normalized) == nil else { return .failure("昵称已被占用，请换一个") }
+        guard find(nickname: normalized) == nil else { return .failure(ServiceError(message: "昵称已被占用，请换一个")) }
 
         let player = Player(context: context)
         player.uid = UUID()
@@ -49,15 +54,15 @@ struct PlayerService {
         return player.pinHash == PINHasher.hash(pin)
     }
 
-    func login(nickname: String, pin: String) -> Result<Player, String> {
-        guard let p = find(nickname: nickname) else { return .failure("未找到该昵称") }
-        guard verify(pin: pin, for: p) else { return .failure("PIN 错误") }
+    func login(nickname: String, pin: String) -> Result<Player, ServiceError> {
+        guard let p = find(nickname: nickname) else { return .failure(ServiceError(message: "未找到该昵称")) }
+        guard verify(pin: pin, for: p) else { return .failure(ServiceError(message: "PIN 错误")) }
         p.lastSeenAt = Date()
         try? context.save()
         return .success(p)
     }
 
-    func recoverQR(nickname: String, pin: String) -> Result<Player, String> {
+    func recoverQR(nickname: String, pin: String) -> Result<Player, ServiceError> {
         return login(nickname: nickname, pin: pin)
     }
 }

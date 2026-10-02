@@ -85,7 +85,7 @@ struct LoginView: View {
             loggedPlayer = p
             navigateToJoin = true
         case .failure(let err):
-            message = err
+            message = err.message
             showMessage = true
         }
     }
@@ -94,7 +94,7 @@ struct LoginView: View {
         let service = PlayerService(context: queueManager.context)
         switch service.recoverQR(nickname: nickname, pin: pin) {
         case .success(let p): recoveredPlayer = p
-        case .failure(let err): message = err; showMessage = true
+        case .failure(let err): message = err.message; showMessage = true
         }
     }
 }

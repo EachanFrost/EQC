@@ -68,7 +68,7 @@ struct RegisterView: View {
         let service = PlayerService(context: queueManager.context)
         switch service.register(nickname: trimmed, pin: pin, avatar: avatar) {
         case .success(let player): newPlayer = player
-        case .failure(let err): message = err; showMessage = true
+        case .failure(let err): message = err.message; showMessage = true
         }
     }
 }

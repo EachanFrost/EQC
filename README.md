@@ -20,7 +20,7 @@ ElectronicQueueCard/
 │   ├── Models/                           枚举（机台/状态/条目类型）
 │   ├── Services/                         队列调度、玩家、二维码、备份、PIN 哈希
 │   ├── Views/                            公共屏 + 各流程界面
-│   ├── QueueKiosk.xcdatamodeld/          Core Data 模型（8 个实体）
+│   ├── QueueKiosk.xcdatamodeld/          Core Data 模型（7 个实体）
 │   └── Info.plist
 ├── build_ipa.sh                          本地一键生成未签名 IPA
 ├── .github/workflows/build-ios.yml       云构建（无 Mac 时用）

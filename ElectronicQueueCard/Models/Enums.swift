@@ -31,10 +31,12 @@ enum MachineStatus: String, CaseIterable {
     }
 }
 
-enum QueueItemType: String, CaseIterable {
+enum QueueItemType: String, CaseIterable, Identifiable {
     case solo = "SOLO"
     case duoMatch = "DUO_MATCH"
     case duoGroup = "DUO_GROUP"
+
+    var id: String { rawValue }
 }
 
 enum QueueItemStatus: String {
