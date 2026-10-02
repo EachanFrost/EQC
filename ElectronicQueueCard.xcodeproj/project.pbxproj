@@ -28,6 +28,7 @@
 		CAFEBABE0000000000000312 /* IdentifyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000212 /* IdentifyView.swift */; };
 		CAFEBABE0000000000000313 /* CameraScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000213 /* CameraScannerView.swift */; };
 		CAFEBABE0000000000000314 /* QRCodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000214 /* QRCodeDisplayView.swift */; };
+		CAFEBABE0000000000000315 /* ManagedObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000215 /* ManagedObjects.swift */; };
 		CAFEBABE0000000000000401 /* QueueKiosk.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000400 /* QueueKiosk.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +55,7 @@
 		CAFEBABE0000000000000212 /* IdentifyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyView.swift; sourceTree = "<group>"; };
 		CAFEBABE0000000000000213 /* CameraScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraScannerView.swift; sourceTree = "<group>"; };
 		CAFEBABE0000000000000214 /* QRCodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeDisplayView.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000215 /* ManagedObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjects.swift; sourceTree = "<group>"; };
 		CAFEBABE0000000000000400 /* QueueKiosk.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodeld; path = QueueKiosk.xcdatamodeld; sourceTree = "<group>"; };
 		CAFEBABE0000000000000500 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -111,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				CAFEBABE0000000000000202 /* Enums.swift */,
+				CAFEBABE0000000000000215 /* ManagedObjects.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -225,6 +228,7 @@
 				CAFEBABE0000000000000312 /* IdentifyView.swift in Sources */,
 				CAFEBABE0000000000000313 /* CameraScannerView.swift in Sources */,
 				CAFEBABE0000000000000314 /* QRCodeDisplayView.swift in Sources */,
+				CAFEBABE0000000000000315 /* ManagedObjects.swift in Sources */,
 				CAFEBABE0000000000000401 /* QueueKiosk.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
