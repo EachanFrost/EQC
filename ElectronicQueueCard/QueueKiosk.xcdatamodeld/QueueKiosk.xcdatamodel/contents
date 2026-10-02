@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AdminLog" representedClassName="AdminLog" codeGenerationType="class">
+        <attribute name="uid" attributeType="UUID"/>
+        <attribute name="action" attributeType="String"/>
+        <attribute name="targetId" optional="YES" attributeType="UUID"/>
+        <attribute name="timestamp" attributeType="Date"/>
+    </entity>
+    <entity name="Guest" representedClassName="Guest" codeGenerationType="class">
+        <attribute name="uid" attributeType="UUID"/>
+        <attribute name="nickname" attributeType="String"/>
+        <attribute name="sessionId" attributeType="UUID"/>
+        <attribute name="createdAt" attributeType="Date"/>
+    </entity>
+    <entity name="Machine" representedClassName="Machine" codeGenerationType="class">
+        <attribute name="uid" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="capacity" attributeType="Integer 16" defaultValueString="2" usesScalarValueType="YES"/>
+        <attribute name="status" attributeType="String"/>
+        <attribute name="currentMatchId" optional="YES" attributeType="UUID"/>
+    </entity>
+    <entity name="Match" representedClassName="Match" codeGenerationType="class">
+        <attribute name="uid" attributeType="UUID"/>
+        <attribute name="machineId" attributeType="String"/>
+        <attribute name="queueItemId" attributeType="UUID"/>
+        <attribute name="status" attributeType="String"/>
+        <attribute name="calledAt" attributeType="Date"/>
+        <attribute name="startedAt" optional="YES" attributeType="Date"/>
+        <attribute name="endedAt" optional="YES" attributeType="Date"/>
+    </entity>
+    <entity name="PassedItem" representedClassName="PassedItem" codeGenerationType="class">
+        <attribute name="uid" attributeType="UUID"/>
+        <attribute name="machineId" attributeType="String"/>
+        <attribute name="queueItemId" attributeType="UUID"/>
+        <attribute name="passedAt" attributeType="Date"/>
+        <attribute name="expiresAt" attributeType="Date"/>
+    </entity>
+    <entity name="Player" representedClassName="Player" codeGenerationType="class">
+        <attribute name="uid" attributeType="UUID"/>
+        <attribute name="nickname" attributeType="String"/>
+        <attribute name="pinHash" attributeType="String"/>
+        <attribute name="qrSecret" attributeType="String"/>
+        <attribute name="avatar" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Date"/>
+        <attribute name="lastSeenAt" attributeType="Date"/>
+    </entity>
+    <entity name="QueueItem" representedClassName="QueueItem" codeGenerationType="class">
+        <attribute name="uid" attributeType="UUID"/>
+        <attribute name="machineId" attributeType="String"/>
+        <attribute name="type" attributeType="String"/>
+        <attribute name="playerId1" optional="YES" attributeType="UUID"/>
+        <attribute name="guestId1" optional="YES" attributeType="UUID"/>
+        <attribute name="playerId2" optional="YES" attributeType="UUID"/>
+        <attribute name="guestId2" optional="YES" attributeType="UUID"/>
+        <attribute name="status" attributeType="String"/>
+        <attribute name="joinedAt" attributeType="Date"/>
+        <attribute name="confirmedAt" optional="YES" attributeType="Date"/>
+        <attribute name="matched" attributeType="Boolean" usesScalarValueType="YES"/>
+    </entity>
+    <elements>
+        <element name="AdminLog" positionX="-63" positionY="-18" width="128" height="89"/>
+        <element name="Guest" positionX="-63" positionY="90" width="128" height="104"/>
+        <element name="Machine" positionX="180" positionY="-18" width="128" height="119"/>
+        <element name="Match" positionX="180" positionY="144" width="128" height="164"/>
+        <element name="PassedItem" positionX="-63" positionY="234" width="128" height="119"/>
+        <element name="Player" positionX="360" positionY="-18" width="128" height="164"/>
+        <element name="QueueItem" positionX="360" positionY="180" width="128" height="254"/>
+    </elements>
+</model>

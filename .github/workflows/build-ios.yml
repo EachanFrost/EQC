@@ -1,0 +1,26 @@
+name: Build unsigned IPA
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build unsigned IPA
+        run: |
+          tr -d '\r' < build_ipa.sh > /tmp/build_ipa.sh
+          bash /tmp/build_ipa.sh
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ElectronicQueueCard-unsigned
+          path: ElectronicQueueCard-unsigned.ipa
+          if-no-files-found: error

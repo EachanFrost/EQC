@@ -1,0 +1,351 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CAFEBABE0000000000000300 /* ElectronicQueueCardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000200 /* ElectronicQueueCardApp.swift */; };
+		CAFEBABE0000000000000301 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000201 /* PersistenceController.swift */; };
+		CAFEBABE0000000000000302 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000202 /* Enums.swift */; };
+		CAFEBABE0000000000000303 /* QueueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000203 /* QueueManager.swift */; };
+		CAFEBABE0000000000000304 /* PlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000204 /* PlayerService.swift */; };
+		CAFEBABE0000000000000305 /* BackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000205 /* BackupService.swift */; };
+		CAFEBABE0000000000000306 /* QRCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000206 /* QRCodeService.swift */; };
+		CAFEBABE0000000000000307 /* PINHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000207 /* PINHasher.swift */; };
+		CAFEBABE0000000000000308 /* KioskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000208 /* KioskView.swift */; };
+		CAFEBABE0000000000000309 /* MachineColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000209 /* MachineColumnView.swift */; };
+		CAFEBABE000000000000030A /* CallBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE000000000000020A /* CallBannerView.swift */; };
+		CAFEBABE000000000000030B /* QueueRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE000000000000020B /* QueueRowView.swift */; };
+		CAFEBABE000000000000030C /* PassedRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE000000000000020C /* PassedRowView.swift */; };
+		CAFEBABE000000000000030D /* BottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE000000000000020D /* BottomBarView.swift */; };
+		CAFEBABE000000000000030E /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE000000000000020E /* LoginView.swift */; };
+		CAFEBABE000000000000030F /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE000000000000020F /* RegisterView.swift */; };
+		CAFEBABE0000000000000310 /* JoinQueueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000210 /* JoinQueueView.swift */; };
+		CAFEBABE0000000000000311 /* GuestJoinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000211 /* GuestJoinView.swift */; };
+		CAFEBABE0000000000000312 /* IdentifyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000212 /* IdentifyView.swift */; };
+		CAFEBABE0000000000000313 /* CameraScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000213 /* CameraScannerView.swift */; };
+		CAFEBABE0000000000000314 /* QRCodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000214 /* QRCodeDisplayView.swift */; };
+		CAFEBABE0000000000000401 /* QueueKiosk.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000400 /* QueueKiosk.xcdatamodeld */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CAFEBABE0000000000000004 /* ElectronicQueueCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ElectronicQueueCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAFEBABE0000000000000200 /* ElectronicQueueCardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectronicQueueCardApp.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000201 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000202 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000203 /* QueueManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueManager.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000204 /* PlayerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerService.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000205 /* BackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupService.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000206 /* QRCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeService.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000207 /* PINHasher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PINHasher.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000208 /* KioskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KioskView.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000209 /* MachineColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineColumnView.swift; sourceTree = "<group>"; };
+		CAFEBABE000000000000020A /* CallBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallBannerView.swift; sourceTree = "<group>"; };
+		CAFEBABE000000000000020B /* QueueRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueRowView.swift; sourceTree = "<group>"; };
+		CAFEBABE000000000000020C /* PassedRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassedRowView.swift; sourceTree = "<group>"; };
+		CAFEBABE000000000000020D /* BottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarView.swift; sourceTree = "<group>"; };
+		CAFEBABE000000000000020E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		CAFEBABE000000000000020F /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000210 /* JoinQueueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinQueueView.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000211 /* GuestJoinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestJoinView.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000212 /* IdentifyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyView.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000213 /* CameraScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraScannerView.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000214 /* QRCodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeDisplayView.swift; sourceTree = "<group>"; };
+		CAFEBABE0000000000000400 /* QueueKiosk.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodeld; path = QueueKiosk.xcdatamodeld; sourceTree = "<group>"; };
+		CAFEBABE0000000000000500 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CAFEBABE0000000000000021 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CAFEBABE0000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				CAFEBABE0000000000000005 /* ElectronicQueueCard */,
+				CAFEBABE0000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CAFEBABE0000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CAFEBABE0000000000000004 /* ElectronicQueueCard.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CAFEBABE0000000000000005 /* ElectronicQueueCard */ = {
+			isa = PBXGroup;
+			children = (
+				CAFEBABE0000000000000100 /* App */,
+				CAFEBABE0000000000000101 /* Models */,
+				CAFEBABE0000000000000102 /* Services */,
+				CAFEBABE0000000000000103 /* Views */,
+				CAFEBABE0000000000000400 /* QueueKiosk.xcdatamodeld */,
+				CAFEBABE0000000000000500 /* Info.plist */,
+			);
+			path = ElectronicQueueCard;
+			sourceTree = "<group>";
+		};
+		CAFEBABE0000000000000100 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				CAFEBABE0000000000000200 /* ElectronicQueueCardApp.swift */,
+				CAFEBABE0000000000000201 /* PersistenceController.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		CAFEBABE0000000000000101 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CAFEBABE0000000000000202 /* Enums.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CAFEBABE0000000000000102 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				CAFEBABE0000000000000203 /* QueueManager.swift */,
+				CAFEBABE0000000000000204 /* PlayerService.swift */,
+				CAFEBABE0000000000000205 /* BackupService.swift */,
+				CAFEBABE0000000000000206 /* QRCodeService.swift */,
+				CAFEBABE0000000000000207 /* PINHasher.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		CAFEBABE0000000000000103 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CAFEBABE0000000000000208 /* KioskView.swift */,
+				CAFEBABE0000000000000209 /* MachineColumnView.swift */,
+				CAFEBABE000000000000020A /* CallBannerView.swift */,
+				CAFEBABE000000000000020B /* QueueRowView.swift */,
+				CAFEBABE000000000000020C /* PassedRowView.swift */,
+				CAFEBABE000000000000020D /* BottomBarView.swift */,
+				CAFEBABE000000000000020E /* LoginView.swift */,
+				CAFEBABE000000000000020F /* RegisterView.swift */,
+				CAFEBABE0000000000000210 /* JoinQueueView.swift */,
+				CAFEBABE0000000000000211 /* GuestJoinView.swift */,
+				CAFEBABE0000000000000212 /* IdentifyView.swift */,
+				CAFEBABE0000000000000213 /* CameraScannerView.swift */,
+				CAFEBABE0000000000000214 /* QRCodeDisplayView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CAFEBABE0000000000000010 /* ElectronicQueueCard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CAFEBABE0000000000000031 /* Build configuration list for PBXNativeTarget "ElectronicQueueCard" */;
+			buildPhases = (
+				CAFEBABE0000000000000020 /* Sources */,
+				CAFEBABE0000000000000021 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ElectronicQueueCard;
+			productName = ElectronicQueueCard;
+			productReference = CAFEBABE0000000000000004 /* ElectronicQueueCard.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CAFEBABE0000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					CAFEBABE0000000000000010 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = CAFEBABE0000000000000030 /* Build configuration list for PBXProject "ElectronicQueueCard" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CAFEBABE0000000000000002;
+			productRefGroup = CAFEBABE0000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CAFEBABE0000000000000010 /* ElectronicQueueCard */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CAFEBABE0000000000000020 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CAFEBABE0000000000000300 /* ElectronicQueueCardApp.swift in Sources */,
+				CAFEBABE0000000000000301 /* PersistenceController.swift in Sources */,
+				CAFEBABE0000000000000302 /* Enums.swift in Sources */,
+				CAFEBABE0000000000000303 /* QueueManager.swift in Sources */,
+				CAFEBABE0000000000000304 /* PlayerService.swift in Sources */,
+				CAFEBABE0000000000000305 /* BackupService.swift in Sources */,
+				CAFEBABE0000000000000306 /* QRCodeService.swift in Sources */,
+				CAFEBABE0000000000000307 /* PINHasher.swift in Sources */,
+				CAFEBABE0000000000000308 /* KioskView.swift in Sources */,
+				CAFEBABE0000000000000309 /* MachineColumnView.swift in Sources */,
+				CAFEBABE000000000000030A /* CallBannerView.swift in Sources */,
+				CAFEBABE000000000000030B /* QueueRowView.swift in Sources */,
+				CAFEBABE000000000000030C /* PassedRowView.swift in Sources */,
+				CAFEBABE000000000000030D /* BottomBarView.swift in Sources */,
+				CAFEBABE000000000000030E /* LoginView.swift in Sources */,
+				CAFEBABE000000000000030F /* RegisterView.swift in Sources */,
+				CAFEBABE0000000000000310 /* JoinQueueView.swift in Sources */,
+				CAFEBABE0000000000000311 /* GuestJoinView.swift in Sources */,
+				CAFEBABE0000000000000312 /* IdentifyView.swift in Sources */,
+				CAFEBABE0000000000000313 /* CameraScannerView.swift in Sources */,
+				CAFEBABE0000000000000314 /* QRCodeDisplayView.swift in Sources */,
+				CAFEBABE0000000000000401 /* QueueKiosk.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CAFEBABE0000000000000032 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CAFEBABE0000000000000033 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CAFEBABE0000000000000034 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "ElectronicQueueCard/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paiqi.queuekiosk;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "2";
+			};
+			name = Debug;
+		};
+		CAFEBABE0000000000000035 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "ElectronicQueueCard/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paiqi.queuekiosk;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CAFEBABE0000000000000030 /* Build configuration list for PBXProject "ElectronicQueueCard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAFEBABE0000000000000032 /* Debug */,
+				CAFEBABE0000000000000033 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CAFEBABE0000000000000031 /* Build configuration list for PBXNativeTarget "ElectronicQueueCard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAFEBABE0000000000000034 /* Debug */,
+				CAFEBABE0000000000000035 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CAFEBABE0000000000000001 /* Project object */;
+}
