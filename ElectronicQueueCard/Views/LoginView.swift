@@ -55,8 +55,8 @@ struct LoginView: View {
         }
         .fullScreenCover(item: $loggedPlayer) { player in
             JoinQueueView(player: player,
-                          onFinished: { dismiss() },
-                          onCancel: { dismiss() })
+                          onFinished: { closeAll() },
+                          onCancel: { closeAll() })
         }
         .alert("提示", isPresented: $showMessage) {
             Button("好", role: .cancel) {}
@@ -86,6 +86,14 @@ struct LoginView: View {
             return
         }
         loggedPlayer = player
+    }
+
+    /// 先关掉排队页（上层 fullScreenCover），再关掉登录页（下层），避免卡在摄像头。
+    private func closeAll() {
+        loggedPlayer = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            dismiss()
+        }
     }
 }
 

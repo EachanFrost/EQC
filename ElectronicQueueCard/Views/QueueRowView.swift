@@ -29,28 +29,27 @@ struct QueueRowView: View {
                 }
             }
             Spacer()
-            HStack(spacing: 0) {
-                Button { queueManager.moveQueueItem(item: item, up: true) } label: {
-                    Image(systemName: "chevron.up").font(.caption2)
-                }
-                .buttonStyle(.borderless)
-
-                Button { queueManager.moveQueueItem(item: item, up: false) } label: {
-                    Image(systemName: "chevron.down").font(.caption2)
-                }
-                .buttonStyle(.borderless)
+            Button { queueManager.moveQueueItem(item: item, up: true) } label: {
+                Image(systemName: "chevron.up").font(.body)
             }
+            .buttonStyle(.bordered)
+
+            Button { queueManager.moveQueueItem(item: item, up: false) } label: {
+                Image(systemName: "chevron.down").font(.body)
+            }
+            .buttonStyle(.bordered)
+
             if item.type == QueueItemType.duoMatch.rawValue {
-                Button("拼机", action: onPair).buttonStyle(.bordered).font(.caption2)
+                Button("拼机", action: onPair).buttonStyle(.bordered).font(.body)
             } else if item.type == QueueItemType.duoGroup.rawValue && !queueManager.hasSecondMember(item) {
-                Button("加入", action: onJoinGroup).buttonStyle(.bordered).font(.caption2)
+                Button("加入", action: onJoinGroup).buttonStyle(.bordered).font(.body)
             }
             Button(role: .destructive) { showCancel = true } label: {
-                Text("取消").font(.caption2)
+                Text("取消").font(.body)
             }
-            .buttonStyle(.borderless)
+            .buttonStyle(.bordered)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 6)
         .alert("取消排队？", isPresented: $showCancel) {
             Button("确认取消", role: .destructive) { queueManager.cancelQueue(item: item) }
             Button("再想想", role: .cancel) {}
