@@ -1,8 +1,10 @@
 import SwiftUI
 
-/// 注册玩家登录后：选择机台与模式入队。
+/// 注册玩家登录后：选择机台与模式入队。选双人匹配且队列已有可拼机玩家时，提示是否拼机合并。
 struct JoinQueueView: View {
     let player: Player
+    var onFinished: (() -> Void)?
+
     @EnvironmentObject var queueManager: QueueManager
     @Environment(\.dismiss) var dismiss
 
@@ -10,6 +12,8 @@ struct JoinQueueView: View {
     @State private var mode: QueueItemType = .solo
     @State private var message: String?
     @State private var showMessage = false
+    @State private var pairTarget: QueueItem?
+    @State private var showPairPrompt = false
 
     var body: some View {
         Form {
@@ -41,9 +45,22 @@ struct JoinQueueView: View {
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
         }
+        .confirmationDialog("与他拼机？", isPresented: $showPairPrompt, titleVisibility: .visible) {
+            Button("与他拼机") { doJoin(pairWith: pairTarget) }
+            Button("各自排队", role: .cancel) { doJoin(pairWith: nil) }
+        } message: {
+            Text(pairTargetMessage)
+        }
         .alert("提示", isPresented: $showMessage) {
             Button("好", role: .cancel) {}
         } message: { Text(message ?? "") }
+    }
+
+    private var pairTargetMessage: String {
+        if let t = pairTarget {
+            return "队列中有「\(queueManager.memberNames(item: t).joined(separator: "、"))」等待拼机，是否与他拼机？"
+        }
+        return ""
     }
 
     private func modeLabel(_ m: QueueItemType) -> String {
@@ -63,10 +80,26 @@ struct JoinQueueView: View {
     }
 
     private func join() {
-        let result = queueManager.joinQueue(side: side, type: mode, player1: player)
+        if mode == .duoMatch, let target = queueManager.findDuoMatchEntry(side: side) {
+            pairTarget = target
+            showPairPrompt = true
+        } else {
+            doJoin(pairWith: nil)
+        }
+    }
+
+    private func doJoin(pairWith target: QueueItem?) {
+        let result: String?
+        if let target = target {
+            result = queueManager.pair(item: target, player: player)
+        } else {
+            result = queueManager.joinQueue(side: side, type: mode, player1: player)
+        }
         if let err = result {
             message = err
             showMessage = true
+        } else if let onFinished = onFinished {
+            onFinished()
         } else {
             dismiss()
         }

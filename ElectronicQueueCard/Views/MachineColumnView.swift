@@ -1,7 +1,7 @@
 import SwiftUI
 import CoreData
 
-/// 单台机的完整栏目：机台状态、当前叫号 / 游玩、队列、过号栏。
+/// 单台机的完整栏目：机台状态、当前叫号/游玩、队列、过号栏（默认隐藏）。
 struct MachineColumnView: View {
     let side: MachineSide
     let onPair: (QueueItem) -> Void
@@ -119,12 +119,12 @@ struct MachineColumnView: View {
         }
     }
 
+    /// 过号栏：默认不显示，有玩家过号才显示。
+    @ViewBuilder
     private var passedList: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("过号栏").font(.headline)
-            if passed.isEmpty {
-                Text("—").font(.footnote).foregroundColor(.secondary).padding(.vertical, 4)
-            } else {
+        if !passed.isEmpty {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("过号栏").font(.headline)
                 ForEach(passed, id: \.objectID) { p in
                     PassedRowView(passed: p)
                 }

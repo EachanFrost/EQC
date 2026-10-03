@@ -3,13 +3,12 @@ import CoreData
 import Combine
 
 /// 核心调度器：两台机完全独立，各自队列、各自叫号、各自游玩状态。
+/// 叫号后玩家点击确认（无需扫码），超时过号；叫号中可取消排队。
 final class QueueManager: ObservableObject {
     let context: NSManagedObjectContext
 
     let callTimeout: TimeInterval = 60          // 叫号确认倒计时
     let passedTimeout: TimeInterval = 30 * 60   // 过号栏保留时长
-
-    @Published var tick: Int = 0
 
     private var timer: Timer?
     private var lastCleanup = Date()
@@ -36,7 +35,6 @@ final class QueueManager: ObservableObject {
     }
 
     private func onTick() {
-        tick += 1
         checkCallTimeouts()
         if Date().timeIntervalSince(lastCleanup) >= cleanupInterval {
             lastCleanup = Date()
@@ -87,6 +85,15 @@ final class QueueManager: ObservableObject {
                                     side.rawValue, QueueItemStatus.waiting.rawValue)
         req.sortDescriptors = [NSSortDescriptor(key: "joinedAt", ascending: true)]
         return (try? context.fetch(req)) ?? []
+    }
+
+    /// 队列中第一个等待拼机的双人匹配条目（用于提示合并）。
+    func findDuoMatchEntry(side: MachineSide) -> QueueItem? {
+        let req: NSFetchRequest<QueueItem> = QueueItem.fetchRequest()
+        req.predicate = NSPredicate(format: "machineId == %@ AND type == %@ AND status == %@",
+                                    side.rawValue, QueueItemType.duoMatch.rawValue, QueueItemStatus.waiting.rawValue)
+        req.sortDescriptors = [NSSortDescriptor(key: "joinedAt", ascending: true)]
+        return try? context.fetch(req).first
     }
 
     // MARK: - 展示辅助
@@ -157,12 +164,16 @@ final class QueueManager: ObservableObject {
 
     // MARK: - 拼机 / 组队
 
-    func pair(item: QueueItem, with player: Player) -> String? {
+    func pair(item: QueueItem, player: Player? = nil, guest: Guest? = nil) -> String? {
         guard item.type == QueueItemType.duoMatch.rawValue else { return "该条目已不是可拼机状态" }
-        if let pid1 = item.playerId1, pid1 == player.uid { return "不能与自己拼机" }
-        removeOtherActiveEntries(playerId: player.uid, except: item.uid)
+        if let p = player {
+            if let pid1 = item.playerId1, pid1 == p.uid { return "不能与自己拼机" }
+            removeOtherActiveEntries(playerId: p.uid, except: item.uid)
+            item.playerId2 = p.uid
+        } else if let g = guest {
+            item.guestId2 = g.uid
+        }
         item.type = QueueItemType.duoGroup.rawValue
-        item.playerId2 = player.uid
         item.matched = true
         log("拼机配对", targetId: item.uid)
         save()
@@ -187,9 +198,9 @@ final class QueueManager: ObservableObject {
 
     private func removeOtherActiveEntries(playerId: UUID, except itemUid: UUID) {
         let req: NSFetchRequest<QueueItem> = QueueItem.fetchRequest()
-        let activeStatuses = [QueueItemStatus.waiting.rawValue, QueueItemStatus.called.rawValue] as NSArray
+        let removable = [QueueItemStatus.waiting.rawValue, QueueItemStatus.called.rawValue] as NSArray
         req.predicate = NSPredicate(format: "(playerId1 == %@ OR playerId2 == %@) AND uid != %@ AND status IN %@",
-                                    playerId as NSUUID, playerId as NSUUID, itemUid as NSUUID, activeStatuses)
+                                    playerId as NSUUID, playerId as NSUUID, itemUid as NSUUID, removable)
         if let items = try? context.fetch(req) {
             for it in items {
                 cleanupGuests(for: it)
@@ -223,6 +234,7 @@ final class QueueManager: ObservableObject {
         callNext(side: side)
     }
 
+    /// 机台空闲时叫下一位。
     func callNext(side: MachineSide) {
         guard let m = machine(side: side), m.status == MachineStatus.idle.rawValue else { return }
         guard let item = waitingItems(for: side).first else { return }
@@ -239,6 +251,7 @@ final class QueueManager: ObservableObject {
         save()
     }
 
+    /// 玩家点击确认上机（无需扫码）。
     func confirmCurrent(side: MachineSide) {
         guard let m = machine(side: side),
               let match = currentMatch(for: m),
@@ -253,28 +266,21 @@ final class QueueManager: ObservableObject {
         save()
     }
 
-    func confirmByScan(payload: String, side: MachineSide) -> String? {
-        guard let secret = QRCodeService.secret(fromPayload: payload),
-              let player = PlayerService(context: context).find(qrSecret: secret) else {
-            return "无法识别的二维码"
+    /// 叫号中取消：移除该条目并叫下一位。
+    func cancelCall(item: QueueItem) {
+        guard let side = MachineSide(rawValue: item.machineId) else { return }
+        guard let m = machine(side: side) else { return }
+        if let match = currentMatch(for: m), match.queueItemId == item.uid {
+            match.status = MatchStatus.done.rawValue
+            match.endedAt = Date()
         }
-        guard let m = machine(side: side),
-              let match = currentMatch(for: m),
-              match.status == MatchStatus.called.rawValue,
-              let item = queueItem(uid: match.queueItemId) else {
-            return "当前没有待确认的叫号"
-        }
-        let ids: [UUID] = [item.playerId1, item.playerId2].compactMap { $0 }
-        guard ids.contains(player.uid) else { return "该账号不在当前叫号中" }
-        confirmCurrent(side: side)
-        return nil
-    }
-
-    func confirmGuest(item: QueueItem) -> String? {
-        guard item.status == QueueItemStatus.called.rawValue else { return "当前没有待确认的叫号" }
-        guard let side = MachineSide(rawValue: item.machineId) else { return "机台无效" }
-        confirmCurrent(side: side)
-        return nil
+        m.currentMatchId = nil
+        m.status = MachineStatus.idle.rawValue
+        cleanupGuests(for: item)
+        context.delete(item)
+        log("取消排队", targetId: item.uid)
+        save()
+        callNext(side: side)
     }
 
     private func checkCallTimeouts() {
@@ -357,17 +363,6 @@ final class QueueManager: ObservableObject {
         save()
     }
 
-    private func cleanupGuests(for item: QueueItem) {
-        if let gid = item.guestId1 { deleteGuest(uid: gid) }
-        if let gid = item.guestId2 { deleteGuest(uid: gid) }
-    }
-
-    private func deleteGuest(uid: UUID) {
-        let req: NSFetchRequest<Guest> = Guest.fetchRequest()
-        req.predicate = NSPredicate(format: "uid == %@", uid as NSUUID)
-        if let g = try? context.fetch(req).first { context.delete(g) }
-    }
-
     func toggleMaintenance(side: MachineSide) {
         guard let m = machine(side: side) else { return }
         switch m.status {
@@ -388,6 +383,17 @@ final class QueueManager: ObservableObject {
         entry.action = action
         entry.targetId = targetId
         entry.timestamp = Date()
+    }
+
+    private func cleanupGuests(for item: QueueItem) {
+        if let gid = item.guestId1 { deleteGuest(uid: gid) }
+        if let gid = item.guestId2 { deleteGuest(uid: gid) }
+    }
+
+    private func deleteGuest(uid: UUID) {
+        let req: NSFetchRequest<Guest> = Guest.fetchRequest()
+        req.predicate = NSPredicate(format: "uid == %@", uid as NSUUID)
+        if let g = try? context.fetch(req).first { context.delete(g) }
     }
 
     /// 启动时校正：若机台停在 CALLING 但对应 Match 已结束，则复位为空闲。

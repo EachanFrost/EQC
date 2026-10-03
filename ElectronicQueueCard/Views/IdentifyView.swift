@@ -6,7 +6,7 @@ enum IdentifyMode {
     case joinGroup // 加入双人组
 }
 
-/// 第二位玩家身份确认：扫码 / 昵称+PIN /（双人组可）游客加入。
+/// 第二位玩家身份确认：扫码 / 昵称+PIN / 游客加入。
 struct IdentifyView: View {
     let item: QueueItem
     let mode: IdentifyMode
@@ -38,11 +38,9 @@ struct IdentifyView: View {
                     SecureField("PIN", text: $pin).keyboardType(.numberPad)
                     Button("登录并确认") { loginAndAct() }
                 }
-                if mode == .joinGroup {
-                    Section("游客加入") {
-                        TextField("临时昵称（留空自动生成）", text: $guestName)
-                        Button("游客加入") { guestAct() }
-                    }
+                Section("游客") {
+                    TextField("临时昵称（留空自动生成）", text: $guestName)
+                    Button("游客加入") { guestAct() }
                 }
             }
             .navigationTitle(mode == .pair ? "与他拼机" : "加入双人组")
@@ -82,7 +80,7 @@ struct IdentifyView: View {
     private func act(player: Player) {
         let result: String?
         switch mode {
-        case .pair: result = queueManager.pair(item: item, with: player)
+        case .pair: result = queueManager.pair(item: item, player: player)
         case .joinGroup: result = queueManager.joinGroup(item: item, player: player)
         }
         if let err = result {
@@ -94,7 +92,6 @@ struct IdentifyView: View {
     }
 
     private func guestAct() {
-        guard mode == .joinGroup else { return }
         let name = guestName.trimmingCharacters(in: .whitespacesAndNewlines)
         let finalName = name.isEmpty ? queueManager.nextGuestNickname() : name
         let guest = Guest(context: queueManager.context)
@@ -103,7 +100,11 @@ struct IdentifyView: View {
         guest.sessionId = UUID()
         guest.createdAt = Date()
 
-        let result = queueManager.joinGroup(item: item, guest: guest)
+        let result: String?
+        switch mode {
+        case .pair: result = queueManager.pair(item: item, guest: guest)
+        case .joinGroup: result = queueManager.joinGroup(item: item, guest: guest)
+        }
         if let err = result {
             queueManager.context.delete(guest)
             message = err

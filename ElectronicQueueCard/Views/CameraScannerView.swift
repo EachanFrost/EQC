@@ -2,22 +2,30 @@ import SwiftUI
 import AVFoundation
 import AudioToolbox
 
-/// 全屏扫码容器：右上角关闭按钮。
+/// 小窗口扫码：中间小区域显示前置摄像头画面（横屏），右上角关闭。
 struct ScannerSheet: View {
     let onScan: (String) -> Void
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            CameraScannerView(onScan: onScan).ignoresSafeArea()
-            Button { dismiss() } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 32))
-                    .foregroundColor(.white)
-                    .padding()
-                    .shadow(radius: 4)
+        VStack(spacing: 14) {
+            HStack(spacing: 12) {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                }
+                Text("请出示二维码").font(.headline)
+                Spacer()
             }
+            CameraScannerView(onScan: onScan)
+                .frame(width: 420, height: 260)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.secondary.opacity(0.4), lineWidth: 1))
+            Text("将手机二维码对准屏幕").font(.footnote).foregroundColor(.secondary)
+            Spacer()
         }
+        .padding()
     }
 }
 
@@ -27,7 +35,7 @@ final class PreviewView: UIView {
     var videoPreviewLayer: AVCaptureVideoPreviewLayer { layer as! AVCaptureVideoPreviewLayer }
 }
 
-/// AVFoundation 二维码扫描（离线）。
+/// AVFoundation 二维码扫描（离线，前置摄像头，横屏预览）。
 struct CameraScannerView: UIViewControllerRepresentable {
     let onScan: (String) -> Void
 
@@ -94,6 +102,7 @@ struct CameraScannerView: UIViewControllerRepresentable {
             previewView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             previewView.videoPreviewLayer.session = session
             previewView.videoPreviewLayer.videoGravity = .resizeAspectFill
+            previewView.videoPreviewLayer.connection?.videoOrientation = .landscapeRight
             vc.view.addSubview(previewView)
 
             DispatchQueue.global(qos: .userInitiated).async { session.startRunning() }

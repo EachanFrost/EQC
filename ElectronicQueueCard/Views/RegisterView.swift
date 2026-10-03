@@ -35,7 +35,7 @@ struct RegisterView: View {
             .alert("提示", isPresented: $showMessage) {
                 Button("好", role: .cancel) {}
             } message: { Text(message ?? "") }
-            .sheet(item: $newPlayer) { p in
+            .sheet(item: $newPlayer, onDismiss: { dismiss() }) { p in
                 QRCodeDisplayView(player: p, recovered: false)
             }
         }

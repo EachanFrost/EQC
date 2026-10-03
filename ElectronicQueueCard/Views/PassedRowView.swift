@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 过号栏里的一条：显示昵称、模式、30 分钟倒计时，玩家点“我回来了”自主恢复。
+/// 过号栏里的一条：显示昵称、模式、30 分钟倒计时，玩家点「我回来了」自主恢复。
 struct PassedRowView: View {
     let passed: PassedItem
     @EnvironmentObject var queueManager: QueueManager

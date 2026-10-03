@@ -7,7 +7,7 @@ private enum CredentialMode: String, Identifiable {
     var id: String { rawValue }
 }
 
-/// 扫码登录：直接进入前置摄像头扫码，旁边提供「昵称登录 / 找回账号」小按钮。
+/// 扫码登录：屏幕中间小窗口显示前置摄像头，旁边提供「昵称登录 / 找回账号」小按钮。
 struct LoginView: View {
     @EnvironmentObject var queueManager: QueueManager
     @Environment(\.dismiss) var dismiss
@@ -20,34 +20,39 @@ struct LoginView: View {
 
     var body: some View {
         NavigationView {
-            ZStack {
-                CameraScannerView(onScan: handleScan)
-                    .ignoresSafeArea()
-
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button { dismiss() } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 32))
-                                .foregroundColor(.white)
-                                .shadow(radius: 4)
-                        }
+            VStack(spacing: 18) {
+                HStack(spacing: 12) {
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.secondary)
                     }
+                    Text("扫码登录").font(.title2.bold())
                     Spacer()
-                    HStack(spacing: 12) {
-                        Button { credentialMode = .login } label: { smallButton("昵称登录") }
-                        Button { credentialMode = .recover } label: { smallButton("找回账号") }
-                    }
-                    .padding(.bottom, 28)
                 }
-                .padding()
+
+                Spacer()
+
+                CameraScannerView(onScan: handleScan)
+                    .frame(width: 420, height: 260)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.secondary.opacity(0.4), lineWidth: 1))
+
+                Text("请将手机二维码对准屏幕").font(.footnote).foregroundColor(.secondary)
+
+                HStack(spacing: 12) {
+                    Button { credentialMode = .login } label: { smallButton("昵称登录") }
+                    Button { credentialMode = .recover } label: { smallButton("找回账号") }
+                }
+
+                Spacer()
             }
+            .padding()
             .navigationBarHidden(true)
             .background(
                 NavigationLink(
                     destination: Group {
-                        if let p = loggedPlayer { JoinQueueView(player: p) }
+                        if let p = loggedPlayer { JoinQueueView(player: p, onFinished: { dismiss() }) }
                     },
                     isActive: $navigateToJoin,
                     label: { EmptyView() }
@@ -69,10 +74,10 @@ struct LoginView: View {
     private func smallButton(_ title: String) -> some View {
         Text(title)
             .font(.footnote)
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 18)
             .padding(.vertical, 9)
-            .background(Color.black.opacity(0.6))
-            .foregroundColor(.white)
+            .background(Color.secondary.opacity(0.18))
+            .foregroundColor(.primary)
             .clipShape(Capsule())
     }
 
