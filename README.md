@@ -101,7 +101,7 @@ sed -i '' $'s/\r$//' build_ipa.sh
 
 ---
 
-## 六、运营操作
+## 五、运营操作
 
 | 操作 | 入口 |
 | --- | --- |
@@ -116,7 +116,7 @@ sed -i '' $'s/\r$//' build_ipa.sh
 
 ---
 
-## 七、JSON 备份导出
+## 六、JSON 备份导出
 
 `BackupService.exportJSON()` 会把全部数据导出为 JSON 到 App 的 `Documents/Backups/queue-backup-<时间>.json`。工程已开启 `UIFileSharingEnabled` + `LSSupportsOpeningDocumentsInPlace`，可用「文件」App 或数据线（访达）取走。
 
@@ -124,7 +124,7 @@ sed -i '' $'s/\r$//' build_ipa.sh
 
 ---
 
-## 八、注意事项
+## 七、注意事项
 
 - 各机台完全独立，双人匹配不跨机台。
 - 过号栏 30 分钟从进入过号栏起算，到期自动清除，需重新排队。
@@ -134,6 +134,6 @@ sed -i '' $'s/\r$//' build_ipa.sh
 
 ---
 
-## 九、版本记录
+## 八、版本记录
 
 - **1.0.0** — 首个正式版本：多机台（1~6）、三种排队模式、玩家账号、扫码登录、语音播报、用户管理、队列排序、过号管理等完整功能。
