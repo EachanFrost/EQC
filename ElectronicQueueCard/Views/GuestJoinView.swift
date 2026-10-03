@@ -29,6 +29,7 @@ struct GuestJoinView: View {
                         ForEach(QueueItemType.allCases) { m in Text(modeLabel(m)).tag(m) }
                     }
                     .pickerStyle(.segmented)
+                    Text(modeHint(mode)).font(.footnote).foregroundColor(.secondary)
                 }
                 Section {
                     Button("游客排队") { join() }.frame(maxWidth: .infinity)
@@ -51,6 +52,14 @@ struct GuestJoinView: View {
         case .solo: return "单人游玩"
         case .duoMatch: return "双人匹配"
         case .duoGroup: return "双人游玩"
+        }
+    }
+
+    private func modeHint(_ m: QueueItemType) -> String {
+        switch m {
+        case .solo: return "独占一台双人机。"
+        case .duoMatch: return "标记可拼机，可被他人配对；叫号时无人拼则自动转单人。"
+        case .duoGroup: return "两人组队，未满两人不叫号；第二人稍后扫码加入。"
         }
     }
 

@@ -74,8 +74,8 @@ struct JoinQueueView: View {
     private func modeHint(_ m: QueueItemType) -> String {
         switch m {
         case .solo: return "独占一台双人机。"
-        case .duoMatch: return "标记可拼机，他人可与你配对；叫号时无人拼则自动转单人。"
-        case .duoGroup: return "两人组队，第二人稍后扫码加入你的队伍。"
+        case .duoMatch: return "标记可拼机，可被他人配对；叫号时无人拼则自动转单人。"
+        case .duoGroup: return "两人组队，未满两人不叫号；第二人稍后扫码加入。"
         }
     }
 

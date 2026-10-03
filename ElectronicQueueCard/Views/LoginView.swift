@@ -31,8 +31,6 @@ struct LoginView: View {
                     Spacer()
                 }
 
-                Spacer()
-
                 CameraScannerView(onScan: handleScan)
                     .frame(width: 420, height: 260)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -44,8 +42,6 @@ struct LoginView: View {
                     Button { credentialMode = .login } label: { smallButton("昵称登录") }
                     Button { credentialMode = .recover } label: { smallButton("找回账号") }
                 }
-
-                Spacer()
             }
             .padding()
             .navigationBarHidden(true)

@@ -96,6 +96,17 @@ final class QueueManager: ObservableObject {
         return try? context.fetch(req).first
     }
 
+    /// 队首可叫号条目：跳过未满两人的双人组。
+    func findNextCallableItem(side: MachineSide) -> QueueItem? {
+        for item in waitingItems(for: side) {
+            if item.type == QueueItemType.duoGroup.rawValue && !hasSecondMember(item) {
+                continue
+            }
+            return item
+        }
+        return nil
+    }
+
     // MARK: - 展示辅助
 
     func memberNames(item: QueueItem) -> [String] {
@@ -193,6 +204,9 @@ final class QueueManager: ObservableObject {
         item.matched = true
         log("加入双人组", targetId: item.uid)
         save()
+        if let side = MachineSide(rawValue: item.machineId) {
+            scheduleIfIdle(side: side)
+        }
         return nil
     }
 
@@ -237,7 +251,7 @@ final class QueueManager: ObservableObject {
     /// 机台空闲时叫下一位。
     func callNext(side: MachineSide) {
         guard let m = machine(side: side), m.status == MachineStatus.idle.rawValue else { return }
-        guard let item = waitingItems(for: side).first else { return }
+        guard let item = findNextCallableItem(side: side) else { return }
         item.status = QueueItemStatus.called.rawValue
         let match = Match(context: context)
         match.uid = UUID()

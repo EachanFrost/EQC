@@ -2,7 +2,6 @@ import SwiftUI
 
 /// 全屏路由，统一用一个 fullScreenCover 承载。
 enum KioskRoute: Identifiable {
-    case login
     case register
     case guest
     case pair(QueueItem)
@@ -10,7 +9,6 @@ enum KioskRoute: Identifiable {
 
     var id: String {
         switch self {
-        case .login: return "login"
         case .register: return "register"
         case .guest: return "guest"
         case .pair(let item): return "pair-\(item.uid.uuidString)"
@@ -22,6 +20,7 @@ enum KioskRoute: Identifiable {
 struct KioskView: View {
     @EnvironmentObject var queueManager: QueueManager
     @State private var route: KioskRoute?
+    @State private var showLogin = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -36,20 +35,20 @@ struct KioskView: View {
             .padding(12)
 
             BottomBarView(
-                loginAction: { route = .login },
+                loginAction: { showLogin = true },
                 guestAction: { route = .guest },
                 registerAction: { route = .register }
             )
         }
         .fullScreenCover(item: $route) { r in
             switch r {
-            case .login: LoginView()
             case .register: RegisterView()
             case .guest: GuestJoinView()
             case .pair(let item): IdentifyView(item: item, mode: .pair)
             case .joinGroup(let item): IdentifyView(item: item, mode: .joinGroup)
             }
         }
+        .sheet(isPresented: $showLogin) { LoginView() }
         .statusBar(hidden: true)
     }
 }
