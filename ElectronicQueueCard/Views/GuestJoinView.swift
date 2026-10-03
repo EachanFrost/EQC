@@ -20,7 +20,7 @@ struct GuestJoinView: View {
                 }
                 Section("机台") {
                     Picker("机台", selection: $side) {
-                        ForEach(MachineSide.allCases) { s in Text(s.displayName).tag(s) }
+                        ForEach(MachineSide.allCases) { s in Text(queueManager.machineName(for: s)).tag(s) }
                     }
                     .pickerStyle(.segmented)
                 }

@@ -24,6 +24,23 @@ struct KioskView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            HStack {
+                Button {
+                    queueManager.toggleVoice()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: queueManager.voiceEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                        Text(queueManager.voiceEnabled ? "语音开" : "语音关")
+                    }
+                    .font(.footnote)
+                    .padding(.horizontal, 12).padding(.vertical, 6)
+                    .background(Color(.tertiarySystemBackground))
+                    .clipShape(Capsule())
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 12).padding(.top, 8)
+
             HStack(spacing: 12) {
                 MachineColumnView(side: .left,
                                   onPair: { route = .pair($0) },

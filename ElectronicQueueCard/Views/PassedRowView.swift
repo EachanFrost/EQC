@@ -24,6 +24,13 @@ struct PassedRowView: View {
                 Text("已清除").font(.caption2).foregroundColor(.secondary)
             }
             Spacer()
+            Button(role: .destructive) {
+                queueManager.leaveFromPassed(passed: passed)
+            } label: {
+                Text("离开").font(.caption2)
+            }
+            .buttonStyle(.bordered)
+
             Button("我回来了") {
                 queueManager.returnFromPassed(passed: passed)
             }

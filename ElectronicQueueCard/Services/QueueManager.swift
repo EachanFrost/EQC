@@ -1,6 +1,7 @@
 import Foundation
 import CoreData
 import Combine
+import AVFoundation
 
 /// 核心调度器：两台机完全独立，各自队列、各自叫号、各自游玩状态。
 /// 叫号后玩家点击确认（无需扫码），超时过号；叫号中可取消排队。
@@ -10,12 +11,16 @@ final class QueueManager: ObservableObject {
     let callTimeout: TimeInterval = 60          // 叫号确认倒计时
     let passedTimeout: TimeInterval = 30 * 60   // 过号栏保留时长
 
+    @Published var voiceEnabled: Bool
+    private let synthesizer = AVSpeechSynthesizer()
+
     private var timer: Timer?
     private var lastCleanup = Date()
     private let cleanupInterval: TimeInterval = 10
 
     init(context: NSManagedObjectContext) {
         self.context = context
+        self.voiceEnabled = UserDefaults.standard.bool(forKey: "voiceEnabled")
         startTimer()
         reconcileMachines()
     }
@@ -52,6 +57,19 @@ final class QueueManager: ObservableObject {
         let req: NSFetchRequest<Machine> = Machine.fetchRequest()
         req.predicate = NSPredicate(format: "uid == %@", side.rawValue)
         return try? context.fetch(req).first
+    }
+
+    func machineName(for side: MachineSide) -> String {
+        machine(side: side)?.name ?? side.displayName
+    }
+
+    func renameMachine(side: MachineSide, name: String) {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard let m = machine(side: side) else { return }
+        m.name = trimmed
+        log("修改机台名称")
+        save()
     }
 
     func queueItem(uid: UUID) -> QueueItem? {
@@ -263,6 +281,7 @@ final class QueueManager: ObservableObject {
         m.status = MachineStatus.calling.rawValue
         log("叫号", targetId: item.uid)
         save()
+        announceCall(item: item, side: side)
     }
 
     /// 玩家点击确认上机（无需扫码）。
@@ -363,6 +382,18 @@ final class QueueManager: ObservableObject {
         scheduleIfIdle(side: side)
     }
 
+    /// 玩家在过号栏点「离开」：移除该过号条目及其队列条目。
+    func leaveFromPassed(passed: PassedItem) {
+        let itemUid = passed.queueItemId
+        if let item = queueItem(uid: itemUid) {
+            cleanupGuests(for: item)
+            context.delete(item)
+        }
+        context.delete(passed)
+        log("离开过号栏", targetId: itemUid)
+        save()
+    }
+
     private func cleanupExpiredPassedItems() {
         let req: NSFetchRequest<PassedItem> = PassedItem.fetchRequest()
         req.predicate = NSPredicate(format: "expiresAt <= %@", Date() as CVarArg)
@@ -389,6 +420,26 @@ final class QueueManager: ObservableObject {
             break
         }
         save()
+    }
+
+    // MARK: - 语音播报
+
+    func toggleVoice() {
+        voiceEnabled.toggle()
+        UserDefaults.standard.set(voiceEnabled, forKey: "voiceEnabled")
+        if !voiceEnabled {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
+    }
+
+    private func announceCall(item: QueueItem, side: MachineSide) {
+        guard voiceEnabled else { return }
+        let names = memberNames(item: item).joined(separator: "、")
+        let machineName = machine(side: side)?.name ?? side.displayName
+        let utterance = AVSpeechUtterance(string: "\(machineName)叫号，请\(names)到机台")
+        utterance.voice = AVSpeechSynthesisVoice(language: "zh-CN")
+        utterance.rate = 0.5
+        synthesizer.speak(utterance)
     }
 
     func log(_ action: String, targetId: UUID? = nil) {

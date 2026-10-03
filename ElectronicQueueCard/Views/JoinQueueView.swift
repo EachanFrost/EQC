@@ -26,7 +26,7 @@ struct JoinQueueView: View {
                 }
                 Section("机台") {
                     Picker("机台", selection: $side) {
-                        ForEach(MachineSide.allCases) { s in Text(s.displayName).tag(s) }
+                        ForEach(MachineSide.allCases) { s in Text(queueManager.machineName(for: s)).tag(s) }
                     }
                     .pickerStyle(.segmented)
                 }
@@ -45,12 +45,6 @@ struct JoinQueueView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
-            }
-            .onChange(of: mode) { newMode in
-                if newMode == .duoMatch, let target = queueManager.findDuoMatchEntry(side: side) {
-                    pairTarget = target
-                    showPairPrompt = true
-                }
             }
             .confirmationDialog("与他拼机？", isPresented: $showPairPrompt, titleVisibility: .visible) {
                 Button("与他拼机") { doJoin(pairWith: pairTarget) }
@@ -89,7 +83,12 @@ struct JoinQueueView: View {
     }
 
     private func join() {
-        doJoin(pairWith: nil)
+        if mode == .duoMatch, let target = queueManager.findDuoMatchEntry(side: side) {
+            pairTarget = target
+            showPairPrompt = true
+        } else {
+            doJoin(pairWith: nil)
+        }
     }
 
     private func doJoin(pairWith target: QueueItem?) {

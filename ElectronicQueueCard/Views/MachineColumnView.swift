@@ -13,6 +13,9 @@ struct MachineColumnView: View {
     @FetchRequest private var items: FetchedResults<QueueItem>
     @FetchRequest private var passed: FetchedResults<PassedItem>
 
+    @State private var showRename = false
+    @State private var renameText = ""
+
     init(side: MachineSide, onPair: @escaping (QueueItem) -> Void, onJoinGroup: @escaping (QueueItem) -> Void) {
         self.side = side
         self.onPair = onPair
@@ -47,11 +50,14 @@ struct MachineColumnView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(Color(.secondarySystemBackground))
         .cornerRadius(16)
+        .sheet(isPresented: $showRename) {
+            RenameMachineSheet(side: side, initialName: renameText)
+        }
     }
 
     private var header: some View {
         HStack(spacing: 8) {
-            Text(side.displayName).font(.title2.bold())
+            Text(machine?.name ?? side.displayName).font(.title2.bold())
             if let m = machine {
                 Text(statusText(m.status))
                     .font(.subheadline)
@@ -59,6 +65,15 @@ struct MachineColumnView: View {
                     .background(statusColor(m.status).opacity(0.18))
                     .foregroundColor(statusColor(m.status))
                     .clipShape(Capsule())
+            }
+            Button {
+                renameText = machine?.name ?? side.displayName
+                showRename = true
+            } label: {
+                Image(systemName: "pencil")
+                    .font(.footnote).foregroundColor(.secondary)
+                    .frame(width: 36, height: 36)
+                    .contentShape(Rectangle())
             }
             Spacer()
             Image(systemName: "wrench.and.screwdriver")
@@ -144,5 +159,42 @@ struct MachineColumnView: View {
         case .maintenance: return .red
         case .none: return .secondary
         }
+    }
+}
+
+/// 机台改名小表单。
+private struct RenameMachineSheet: View {
+    let side: MachineSide
+    @State private var name: String
+
+    @EnvironmentObject var queueManager: QueueManager
+    @Environment(\.dismiss) var dismiss
+
+    init(side: MachineSide, initialName: String) {
+        self.side = side
+        _name = State(initialValue: initialName)
+    }
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section("机台名称") {
+                    TextField("输入机台名称", text: $name)
+                }
+                Section {
+                    Button("保存") {
+                        queueManager.renameMachine(side: side, name: name)
+                        dismiss()
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .navigationTitle("修改\(side.displayName)名称")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
+            }
+        }
+        .navigationViewStyle(.stack)
     }
 }
