@@ -21,6 +21,7 @@ struct KioskView: View {
     @EnvironmentObject var queueManager: QueueManager
     @State private var route: KioskRoute?
     @State private var showLogin = false
+    @State private var showUserManagement = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -46,6 +47,19 @@ struct KioskView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "square.grid.2x2")
                         Text("机台数 \(queueManager.machineCount)")
+                    }
+                    .font(.footnote)
+                    .padding(.horizontal, 12).padding(.vertical, 6)
+                    .background(Color(.tertiarySystemBackground))
+                    .clipShape(Capsule())
+                }
+
+                Button {
+                    showUserManagement = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "person.2")
+                        Text("用户管理")
                     }
                     .font(.footnote)
                     .padding(.horizontal, 12).padding(.vertical, 6)
@@ -84,6 +98,7 @@ struct KioskView: View {
             }
         }
         .fullScreenCover(isPresented: $showLogin) { LoginView().background(ClearBackgroundView()) }
+        .sheet(isPresented: $showUserManagement) { UserManagementView() }
         .statusBar(hidden: true)
     }
 }

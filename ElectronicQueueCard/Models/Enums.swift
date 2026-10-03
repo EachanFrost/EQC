@@ -30,6 +30,15 @@ enum MachineConfig {
     }
 }
 
+enum AdminConfig {
+    static let passwordKey = "adminPassword"
+
+    static var password: String {
+        get { UserDefaults.standard.string(forKey: passwordKey) ?? "123456" }
+        set { UserDefaults.standard.set(newValue, forKey: passwordKey) }
+    }
+}
+
 enum MachineStatus: String, CaseIterable {
     case idle = "IDLE"
     case calling = "CALLING"

@@ -63,4 +63,31 @@ struct PlayerService {
     func recoverQR(nickname: String, pin: String) -> Result<Player, ServiceError> {
         return login(nickname: nickname, pin: pin)
     }
+
+    func delete(_ player: Player) {
+        context.delete(player)
+        try? context.save()
+    }
+
+    func rename(_ player: Player, nickname: String) -> Result<Player, ServiceError> {
+        let normalized = nickname.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalized.isEmpty else { return .failure(ServiceError(message: "昵称不能为空")) }
+        if normalized != player.nickname, find(nickname: normalized) != nil {
+            return .failure(ServiceError(message: "昵称已被占用"))
+        }
+        player.nickname = normalized
+        try? context.save()
+        return .success(player)
+    }
+
+    func changePin(_ player: Player, newPin: String) -> Result<Player, ServiceError> {
+        let digits = CharacterSet.decimalDigits
+        guard newPin.count >= 4, newPin.count <= 6,
+              newPin.rangeOfCharacter(from: digits.inverted) == nil else {
+            return .failure(ServiceError(message: "PIN 需为 4-6 位数字"))
+        }
+        player.pinHash = PINHasher.hash(newPin)
+        try? context.save()
+        return .success(player)
+    }
 }
