@@ -7,64 +7,68 @@ private enum CredentialMode: String, Identifiable {
     var id: String { rawValue }
 }
 
-/// 扫码登录：屏幕中间小窗口显示前置摄像头，旁边提供「昵称登录 / 找回账号」小按钮。
+private enum LoginSheet: Identifiable {
+    case credential(CredentialMode)
+    case joinQueue(Player)
+
+    var id: String {
+        switch self {
+        case .credential: return "credential"
+        case .joinQueue: return "joinQueue"
+        }
+    }
+}
+
+/// 扫码登录：屏幕中间摄像头小窗口，四周透明。
 struct LoginView: View {
     @EnvironmentObject var queueManager: QueueManager
     @Environment(\.dismiss) var dismiss
 
-    @State private var credentialMode: CredentialMode?
+    @State private var sheet: LoginSheet?
     @State private var message: String?
     @State private var showMessage = false
-    @State private var loggedPlayer: Player?
-    @State private var navigateToJoin = false
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                CameraScannerView(onScan: handleScan)
-                    .frame(width: 480, height: 320)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+        ZStack {
+            CameraScannerView(onScan: handleScan)
+                .frame(width: 480, height: 320)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
 
-                VStack {
-                    HStack {
-                        Button { dismiss() } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                                .shadow(radius: 4)
-                        }
-                        Spacer()
+            VStack {
+                HStack {
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .shadow(radius: 4)
                     }
                     Spacer()
-                    HStack(spacing: 12) {
-                        Button { credentialMode = .login } label: { smallButton("昵称登录") }
-                        Button { credentialMode = .recover } label: { smallButton("找回账号") }
-                    }
-                    .padding(.bottom, 24)
                 }
-                .padding()
-            }
-            .navigationBarHidden(true)
-            .background(
-                NavigationLink(
-                    destination: Group {
-                        if let p = loggedPlayer { JoinQueueView(player: p, onFinished: { dismiss() }) }
-                    },
-                    isActive: $navigateToJoin,
-                    label: { EmptyView() }
-                )
-            )
-            .sheet(item: $credentialMode) { mode in
-                CredentialSheet(mode: mode) { player in
-                    loggedPlayer = player
-                    navigateToJoin = true
+                Spacer()
+                HStack(spacing: 12) {
+                    Button { sheet = .credential(.login) } label: { smallButton("昵称登录") }
+                    Button { sheet = .credential(.recover) } label: { smallButton("找回账号") }
                 }
+                .padding(.bottom, 24)
             }
-            .alert("提示", isPresented: $showMessage) {
-                Button("好", role: .cancel) {}
-            } message: { Text(message ?? "") }
+            .padding()
         }
-        .navigationViewStyle(.stack)
+        .sheet(item: $sheet) { s in
+            switch s {
+            case .credential(let mode):
+                CredentialSheet(mode: mode) { player in
+                    sheet = .joinQueue(player)
+                }
+            case .joinQueue(let player):
+                JoinQueueView(player: player, onFinished: {
+                    sheet = nil
+                    dismiss()
+                })
+            }
+        }
+        .alert("提示", isPresented: $showMessage) {
+            Button("好", role: .cancel) {}
+        } message: { Text(message ?? "") }
     }
 
     private func smallButton(_ title: String) -> some View {
@@ -89,8 +93,7 @@ struct LoginView: View {
             showMessage = true
             return
         }
-        loggedPlayer = player
-        navigateToJoin = true
+        sheet = .joinQueue(player)
     }
 }
 
@@ -142,7 +145,6 @@ private struct CredentialSheet: View {
             switch service.login(nickname: nickname, pin: pin) {
             case .success(let p):
                 onLoggedIn?(p)
-                dismiss()
             case .failure(let err):
                 message = err.message
                 showMessage = true
