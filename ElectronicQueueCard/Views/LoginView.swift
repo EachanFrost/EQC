@@ -22,7 +22,8 @@ struct LoginView: View {
         NavigationView {
             ZStack {
                 CameraScannerView(onScan: handleScan)
-                    .ignoresSafeArea()
+                    .frame(width: 480, height: 320)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
 
                 VStack {
                     HStack {
