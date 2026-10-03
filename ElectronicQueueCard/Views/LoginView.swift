@@ -21,27 +21,27 @@ struct LoginView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color.black.opacity(0.55).ignoresSafeArea()
+                CameraScannerView(onScan: handleScan)
+                    .ignoresSafeArea()
 
-                VStack(spacing: 12) {
-                    CameraScannerView(onScan: handleScan)
-                        .frame(width: 420, height: 260)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .overlay(alignment: .topLeading) {
-                            Button { dismiss() } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                                    .shadow(radius: 4)
-                            }
-                            .padding(8)
+                VStack {
+                    HStack {
+                        Button { dismiss() } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.white)
+                                .shadow(radius: 4)
                         }
-
+                        Spacer()
+                    }
+                    Spacer()
                     HStack(spacing: 12) {
                         Button { credentialMode = .login } label: { smallButton("昵称登录") }
                         Button { credentialMode = .recover } label: { smallButton("找回账号") }
                     }
+                    .padding(.bottom, 24)
                 }
+                .padding()
             }
             .navigationBarHidden(true)
             .background(
