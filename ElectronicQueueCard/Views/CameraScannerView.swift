@@ -14,6 +14,8 @@ struct ScannerSheet: View {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title2)
                         .foregroundColor(.secondary)
+                        .frame(width: 48, height: 48)
+                        .contentShape(Rectangle())
                 }
                 Text("请出示二维码").font(.headline)
                 Spacer()

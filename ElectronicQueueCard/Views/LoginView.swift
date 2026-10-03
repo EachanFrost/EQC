@@ -41,6 +41,8 @@ struct LoginView: View {
                                     .font(.title2)
                                     .foregroundColor(.white)
                                     .shadow(radius: 4)
+                                    .frame(width: 48, height: 48)
+                                    .contentShape(Rectangle())
                             }
                             Spacer()
                         }

@@ -16,44 +16,53 @@ struct JoinQueueView: View {
     @State private var showPairPrompt = false
 
     var body: some View {
-        Form {
-            Section {
-                VStack(alignment: .leading) {
-                    Text(player.nickname).font(.headline)
-                    Text("选择机台与模式开始排队").font(.footnote).foregroundColor(.secondary)
+        NavigationView {
+            Form {
+                Section {
+                    VStack(alignment: .leading) {
+                        Text(player.nickname).font(.headline)
+                        Text("选择机台与模式开始排队").font(.footnote).foregroundColor(.secondary)
+                    }
+                }
+                Section("机台") {
+                    Picker("机台", selection: $side) {
+                        ForEach(MachineSide.allCases) { s in Text(s.displayName).tag(s) }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                Section("模式") {
+                    Picker("模式", selection: $mode) {
+                        ForEach(QueueItemType.allCases) { m in Text(modeLabel(m)).tag(m) }
+                    }
+                    .pickerStyle(.segmented)
+                    Text(modeHint(mode)).font(.footnote).foregroundColor(.secondary)
+                }
+                Section {
+                    Button("开始排队") { join() }.frame(maxWidth: .infinity)
                 }
             }
-            Section("机台") {
-                Picker("机台", selection: $side) {
-                    ForEach(MachineSide.allCases) { s in Text(s.displayName).tag(s) }
+            .navigationTitle("排队")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
+            }
+            .onChange(of: mode) { newMode in
+                if newMode == .duoMatch, let target = queueManager.findDuoMatchEntry(side: side) {
+                    pairTarget = target
+                    showPairPrompt = true
                 }
-                .pickerStyle(.segmented)
             }
-            Section("模式") {
-                Picker("模式", selection: $mode) {
-                    ForEach(QueueItemType.allCases) { m in Text(modeLabel(m)).tag(m) }
-                }
-                .pickerStyle(.segmented)
-                Text(modeHint(mode)).font(.footnote).foregroundColor(.secondary)
+            .confirmationDialog("与他拼机？", isPresented: $showPairPrompt, titleVisibility: .visible) {
+                Button("与他拼机") { doJoin(pairWith: pairTarget) }
+                Button("各自排队", role: .cancel) { doJoin(pairWith: nil) }
+            } message: {
+                Text(pairTargetMessage)
             }
-            Section {
-                Button("开始排队") { join() }.frame(maxWidth: .infinity)
-            }
+            .alert("提示", isPresented: $showMessage) {
+                Button("好", role: .cancel) {}
+            } message: { Text(message ?? "") }
         }
-        .navigationTitle("排队")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
-        }
-        .confirmationDialog("与他拼机？", isPresented: $showPairPrompt, titleVisibility: .visible) {
-            Button("与他拼机") { doJoin(pairWith: pairTarget) }
-            Button("各自排队", role: .cancel) { doJoin(pairWith: nil) }
-        } message: {
-            Text(pairTargetMessage)
-        }
-        .alert("提示", isPresented: $showMessage) {
-            Button("好", role: .cancel) {}
-        } message: { Text(message ?? "") }
+        .navigationViewStyle(.stack)
     }
 
     private var pairTargetMessage: String {
@@ -80,12 +89,7 @@ struct JoinQueueView: View {
     }
 
     private func join() {
-        if mode == .duoMatch, let target = queueManager.findDuoMatchEntry(side: side) {
-            pairTarget = target
-            showPairPrompt = true
-        } else {
-            doJoin(pairWith: nil)
-        }
+        doJoin(pairWith: nil)
     }
 
     private func doJoin(pairWith target: QueueItem?) {
