@@ -24,7 +24,7 @@ struct KioskView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
+            HStack(spacing: 10) {
                 Button {
                     queueManager.toggleVoice()
                 } label: {
@@ -37,19 +37,37 @@ struct KioskView: View {
                     .background(Color(.tertiarySystemBackground))
                     .clipShape(Capsule())
                 }
+
+                Menu {
+                    ForEach(1...MachineConfig.maxCount, id: \.self) { n in
+                        Button("\(n) 台机台") { queueManager.setMachineCount(n) }
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "square.grid.2x2")
+                        Text("机台数 \(queueManager.machineCount)")
+                    }
+                    .font(.footnote)
+                    .padding(.horizontal, 12).padding(.vertical, 6)
+                    .background(Color(.tertiarySystemBackground))
+                    .clipShape(Capsule())
+                }
+
                 Spacer()
             }
             .padding(.horizontal, 12).padding(.top, 8)
 
-            HStack(spacing: 12) {
-                MachineColumnView(side: .left,
-                                  onPair: { route = .pair($0) },
-                                  onJoinGroup: { route = .joinGroup($0) })
-                MachineColumnView(side: .right,
-                                  onPair: { route = .pair($0) },
-                                  onJoinGroup: { route = .joinGroup($0) })
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 380), spacing: 12)], spacing: 12) {
+                    ForEach(queueManager.machineIds, id: \.self) { side in
+                        MachineColumnView(side: side,
+                                          onPair: { route = .pair($0) },
+                                          onJoinGroup: { route = .joinGroup($0) })
+                            .frame(minHeight: 460)
+                    }
+                }
+                .padding(12)
             }
-            .padding(12)
 
             BottomBarView(
                 loginAction: { showLogin = true },

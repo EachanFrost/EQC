@@ -8,7 +8,7 @@ struct JoinQueueView: View {
     @EnvironmentObject var queueManager: QueueManager
     @Environment(\.dismiss) var dismiss
 
-    @State private var side: MachineSide = .left
+    @State private var side: MachineSide = "1"
     @State private var mode: QueueItemType = .solo
     @State private var message: String?
     @State private var showMessage = false
@@ -26,7 +26,7 @@ struct JoinQueueView: View {
                 }
                 Section("机台") {
                     Picker("机台", selection: $side) {
-                        ForEach(MachineSide.allCases) { s in Text(queueManager.machineName(for: s)).tag(s) }
+                        ForEach(queueManager.machineIds, id: \.self) { s in Text(queueManager.machineName(for: s)).tag(s) }
                     }
                     .pickerStyle(.segmented)
                 }

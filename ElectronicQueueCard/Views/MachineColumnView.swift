@@ -24,15 +24,15 @@ struct MachineColumnView: View {
         let active = [QueueItemStatus.waiting.rawValue, QueueItemStatus.called.rawValue, QueueItemStatus.playing.rawValue] as NSArray
         _machines = FetchRequest<Machine>(
             sortDescriptors: [NSSortDescriptor(key: "uid", ascending: true)],
-            predicate: NSPredicate(format: "uid == %@", side.rawValue)
+            predicate: NSPredicate(format: "uid == %@", side)
         )
         _items = FetchRequest<QueueItem>(
             sortDescriptors: [NSSortDescriptor(key: "joinedAt", ascending: true)],
-            predicate: NSPredicate(format: "machineId == %@ AND status IN %@", side.rawValue, active)
+            predicate: NSPredicate(format: "machineId == %@ AND status IN %@", side, active)
         )
         _passed = FetchRequest<PassedItem>(
             sortDescriptors: [NSSortDescriptor(key: "passedAt", ascending: true)],
-            predicate: NSPredicate(format: "machineId == %@", side.rawValue)
+            predicate: NSPredicate(format: "machineId == %@", side)
         )
     }
 
@@ -57,7 +57,7 @@ struct MachineColumnView: View {
 
     private var header: some View {
         HStack(spacing: 8) {
-            Text(machine?.name ?? side.displayName).font(.title2.bold())
+            Text(machine?.name ?? MachineConfig.defaultName(for: side)).font(.title2.bold())
             if let m = machine {
                 Text(statusText(m.status))
                     .font(.subheadline)
@@ -67,7 +67,7 @@ struct MachineColumnView: View {
                     .clipShape(Capsule())
             }
             Button {
-                renameText = machine?.name ?? side.displayName
+                renameText = machine?.name ?? MachineConfig.defaultName(for: side)
                 showRename = true
             } label: {
                 Image(systemName: "pencil")
@@ -189,7 +189,7 @@ private struct RenameMachineSheet: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .navigationTitle("修改\(side.displayName)名称")
+            .navigationTitle("修改\(MachineConfig.defaultName(for: side))名称")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }

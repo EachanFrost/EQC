@@ -12,7 +12,12 @@ final class QueueManager: ObservableObject {
     let passedTimeout: TimeInterval = 30 * 60   // 过号栏保留时长
 
     @Published var voiceEnabled: Bool
+    @Published var machineCount: Int
     private let synthesizer = AVSpeechSynthesizer()
+
+    var machineIds: [MachineSide] {
+        (1...machineCount).map { "\($0)" }
+    }
 
     private var timer: Timer?
     private var lastCleanup = Date()
@@ -21,7 +26,10 @@ final class QueueManager: ObservableObject {
     init(context: NSManagedObjectContext) {
         self.context = context
         self.voiceEnabled = UserDefaults.standard.bool(forKey: "voiceEnabled")
+        let saved = UserDefaults.standard.integer(forKey: MachineConfig.countKey)
+        self.machineCount = (saved >= 1 && saved <= MachineConfig.maxCount) ? saved : 2
         startTimer()
+        syncMachines()
         reconcileMachines()
     }
 
@@ -55,12 +63,12 @@ final class QueueManager: ObservableObject {
 
     func machine(side: MachineSide) -> Machine? {
         let req: NSFetchRequest<Machine> = Machine.fetchRequest()
-        req.predicate = NSPredicate(format: "uid == %@", side.rawValue)
+        req.predicate = NSPredicate(format: "uid == %@", side)
         return try? context.fetch(req).first
     }
 
     func machineName(for side: MachineSide) -> String {
-        machine(side: side)?.name ?? side.displayName
+        machine(side: side)?.name ?? MachineConfig.defaultName(for: side)
     }
 
     func renameMachine(side: MachineSide, name: String) {
@@ -100,7 +108,7 @@ final class QueueManager: ObservableObject {
     func waitingItems(for side: MachineSide) -> [QueueItem] {
         let req: NSFetchRequest<QueueItem> = QueueItem.fetchRequest()
         req.predicate = NSPredicate(format: "machineId == %@ AND status == %@",
-                                    side.rawValue, QueueItemStatus.waiting.rawValue)
+                                    side, QueueItemStatus.waiting.rawValue)
         req.sortDescriptors = [NSSortDescriptor(key: "joinedAt", ascending: true)]
         return (try? context.fetch(req)) ?? []
     }
@@ -109,7 +117,7 @@ final class QueueManager: ObservableObject {
     func findDuoMatchEntry(side: MachineSide) -> QueueItem? {
         let req: NSFetchRequest<QueueItem> = QueueItem.fetchRequest()
         req.predicate = NSPredicate(format: "machineId == %@ AND type == %@ AND status == %@",
-                                    side.rawValue, QueueItemType.duoMatch.rawValue, QueueItemStatus.waiting.rawValue)
+                                    side, QueueItemType.duoMatch.rawValue, QueueItemStatus.waiting.rawValue)
         req.sortDescriptors = [NSSortDescriptor(key: "joinedAt", ascending: true)]
         return try? context.fetch(req).first
     }
@@ -170,7 +178,7 @@ final class QueueManager: ObservableObject {
         }
         let item = QueueItem(context: context)
         item.uid = UUID()
-        item.machineId = side.rawValue
+        item.machineId = side
         item.type = type.rawValue
         item.playerId1 = player1?.uid
         item.guestId1 = guest1?.uid
@@ -222,9 +230,7 @@ final class QueueManager: ObservableObject {
         item.matched = true
         log("加入双人组", targetId: item.uid)
         save()
-        if let side = MachineSide(rawValue: item.machineId) {
-            scheduleIfIdle(side: side)
-        }
+        scheduleIfIdle(side: item.machineId)
         return nil
     }
 
@@ -273,7 +279,7 @@ final class QueueManager: ObservableObject {
         item.status = QueueItemStatus.called.rawValue
         let match = Match(context: context)
         match.uid = UUID()
-        match.machineId = side.rawValue
+        match.machineId = side
         match.queueItemId = item.uid
         match.status = MatchStatus.called.rawValue
         match.calledAt = Date()
@@ -301,7 +307,7 @@ final class QueueManager: ObservableObject {
 
     /// 叫号中取消：移除该条目并叫下一位。
     func cancelCall(item: QueueItem) {
-        guard let side = MachineSide(rawValue: item.machineId) else { return }
+        let side = item.machineId
         guard let m = machine(side: side) else { return }
         if let match = currentMatch(for: m), match.queueItemId == item.uid {
             match.status = MatchStatus.done.rawValue
@@ -317,7 +323,7 @@ final class QueueManager: ObservableObject {
     }
 
     private func checkCallTimeouts() {
-        for side in MachineSide.allCases {
+        for side in machineIds {
             guard let m = machine(side: side),
                   m.status == MachineStatus.calling.rawValue,
                   let match = currentMatch(for: m),
@@ -335,7 +341,7 @@ final class QueueManager: ObservableObject {
         item.status = QueueItemStatus.passed.rawValue
         let passed = PassedItem(context: context)
         passed.uid = UUID()
-        passed.machineId = side.rawValue
+        passed.machineId = side
         passed.queueItemId = item.uid
         passed.passedAt = Date()
         passed.expiresAt = Date().addingTimeInterval(passedTimeout)
@@ -368,8 +374,7 @@ final class QueueManager: ObservableObject {
 
     func returnFromPassed(passed: PassedItem) {
         let itemUid = passed.queueItemId
-        let machineRaw = passed.machineId
-        guard let side = MachineSide(rawValue: machineRaw) else { return }
+        let side = passed.machineId
         if let item = queueItem(uid: itemUid) {
             let others = waitingItems(for: side).filter { $0.uid != itemUid }
             let earliest = others.map { $0.joinedAt }.min()
@@ -422,6 +427,36 @@ final class QueueManager: ObservableObject {
         save()
     }
 
+    // MARK: - 机台数量
+
+    func setMachineCount(_ count: Int) {
+        let clamped = min(max(count, 1), MachineConfig.maxCount)
+        machineCount = clamped
+        MachineConfig.count = clamped
+        syncMachines()
+        for side in machineIds {
+            scheduleIfIdle(side: side)
+        }
+    }
+
+    private func syncMachines() {
+        let ids = machineIds
+        let fetch: NSFetchRequest<Machine> = Machine.fetchRequest()
+        let existing = (try? context.fetch(fetch)) ?? []
+        let existingIds = Set(existing.map { $0.uid })
+        for m in existing where !ids.contains(m.uid) {
+            context.delete(m)
+        }
+        for id in ids where !existingIds.contains(id) {
+            let machine = Machine(context: context)
+            machine.uid = id
+            machine.name = MachineConfig.defaultName(for: id)
+            machine.capacity = 2
+            machine.status = MachineStatus.idle.rawValue
+        }
+        save()
+    }
+
     // MARK: - 语音播报
 
     func toggleVoice() {
@@ -435,10 +470,11 @@ final class QueueManager: ObservableObject {
     private func announceCall(item: QueueItem, side: MachineSide) {
         guard voiceEnabled else { return }
         let names = memberNames(item: item).joined(separator: "、")
-        let machineName = machine(side: side)?.name ?? side.displayName
-        let utterance = AVSpeechUtterance(string: "\(machineName)叫号，请\(names)到机台")
+        let machineName = machine(side: side)?.name ?? MachineConfig.defaultName(for: side)
+        let utterance = AVSpeechUtterance(string: "\(machineName)叫号，请\(names)到\(machineName)机台，请\(names)到\(machineName)机台")
         utterance.voice = AVSpeechSynthesisVoice(language: "zh-CN")
         utterance.rate = 0.5
+        synthesizer.stopSpeaking(at: .immediate)
         synthesizer.speak(utterance)
     }
 
@@ -463,7 +499,7 @@ final class QueueManager: ObservableObject {
 
     /// 启动时校正：若机台停在 CALLING 但对应 Match 已结束，则复位为空闲。
     private func reconcileMachines() {
-        for side in MachineSide.allCases {
+        for side in machineIds {
             guard let m = machine(side: side), m.status == MachineStatus.calling.rawValue else { continue }
             if let match = currentMatch(for: m), match.status == MatchStatus.called.rawValue {
                 // 仍在叫号中，交给定时器处理

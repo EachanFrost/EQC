@@ -48,8 +48,9 @@ struct IdentifyView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
             }
-            .sheet(isPresented: $showScanner) {
+            .fullScreenCover(isPresented: $showScanner) {
                 ScannerSheet { payload in handleScan(payload) }
+                    .background(ClearBackgroundView())
             }
             .alert("提示", isPresented: $showMessage) {
                 Button("好", role: .cancel) {}

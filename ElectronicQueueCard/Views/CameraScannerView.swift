@@ -2,32 +2,26 @@ import SwiftUI
 import AVFoundation
 import AudioToolbox
 
-/// 小窗口扫码：中间小区域显示前置摄像头画面（横屏），右上角关闭。
+/// 扫码确认小窗口：与扫码登录同款样式，摄像头画面内左上角关闭。
 struct ScannerSheet: View {
     let onScan: (String) -> Void
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        VStack(spacing: 14) {
-            HStack(spacing: 12) {
+        CameraScannerView(onScan: onScan)
+            .frame(width: 480, height: 320)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(alignment: .topLeading) {
                 Button { dismiss() } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title2)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.white)
+                        .shadow(radius: 4)
                         .frame(width: 48, height: 48)
                         .contentShape(Rectangle())
                 }
-                Text("请出示二维码").font(.headline)
-                Spacer()
+                .padding(8)
             }
-            CameraScannerView(onScan: onScan)
-                .frame(width: 420, height: 260)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.secondary.opacity(0.4), lineWidth: 1))
-            Text("将手机二维码对准屏幕").font(.footnote).foregroundColor(.secondary)
-            Spacer()
-        }
-        .padding()
     }
 }
 
@@ -37,7 +31,7 @@ final class PreviewView: UIView {
     var videoPreviewLayer: AVCaptureVideoPreviewLayer { layer as! AVCaptureVideoPreviewLayer }
 }
 
-/// AVFoundation 二维码扫描（离线，前置摄像头，横屏预览）。
+/// AVFoundation 二维码扫描（离线，前置摄像头，画面随设备方向旋转）。
 struct CameraScannerView: UIViewControllerRepresentable {
     let onScan: (String) -> Void
 
@@ -74,6 +68,7 @@ struct CameraScannerView: UIViewControllerRepresentable {
     final class Coordinator: NSObject, AVCaptureMetadataOutputObjectsDelegate {
         let onScan: (String) -> Void
         var session: AVCaptureSession?
+        var previewLayer: AVCaptureVideoPreviewLayer?
         var handled = false
 
         init(onScan: @escaping (String) -> Void) {
@@ -104,13 +99,17 @@ struct CameraScannerView: UIViewControllerRepresentable {
             previewView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             previewView.videoPreviewLayer.session = session
             previewView.videoPreviewLayer.videoGravity = .resizeAspectFill
-            previewView.videoPreviewLayer.connection?.videoOrientation = .landscapeRight
+            previewView.videoPreviewLayer.connection?.videoOrientation = currentOrientation()
+            previewLayer = previewView.videoPreviewLayer
             vc.view.addSubview(previewView)
+
+            NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
 
             DispatchQueue.global(qos: .userInitiated).async { session.startRunning() }
         }
 
         func stop() {
+            NotificationCenter.default.removeObserver(self)
             session?.stopRunning()
         }
 
@@ -133,6 +132,26 @@ struct CameraScannerView: UIViewControllerRepresentable {
             handled = true
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             onScan(value)
+        }
+
+        @objc private func orientationDidChange() {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.previewLayer?.connection?.videoOrientation = self.currentOrientation()
+            }
+        }
+
+        private func currentOrientation() -> AVCaptureVideoOrientation {
+            if let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
+                switch scene.interfaceOrientation {
+                case .portrait: return .portrait
+                case .portraitUpsideDown: return .portraitUpsideDown
+                case .landscapeLeft: return .landscapeLeft
+                case .landscapeRight: return .landscapeRight
+                default: return .portrait
+                }
+            }
+            return .portrait
         }
     }
 }

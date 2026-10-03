@@ -1,16 +1,31 @@
 import Foundation
 
-/// 左右两台机台，完全独立。
-enum MachineSide: String, CaseIterable, Identifiable {
-    case left = "LEFT"
-    case right = "RIGHT"
+/// 机台用字符串 ID 表示（"1"、"2"、"3"...），数量可配置。
+typealias MachineSide = String
 
-    var id: String { rawValue }
+enum MachineConfig {
+    static let maxCount = 6
+    static let countKey = "machineCount"
 
-    var displayName: String {
-        switch self {
-        case .left: return "左机"
-        case .right: return "右机"
+    static var count: Int {
+        get {
+            let v = UserDefaults.standard.integer(forKey: countKey)
+            return (v >= 1 && v <= maxCount) ? v : 2
+        }
+        set {
+            UserDefaults.standard.set(min(max(newValue, 1), maxCount), forKey: countKey)
+        }
+    }
+
+    static var ids: [MachineSide] {
+        (1...count).map { "\($0)" }
+    }
+
+    static func defaultName(for side: MachineSide) -> String {
+        switch side {
+        case "1": return "左机"
+        case "2": return "右机"
+        default: return "机台\(side)"
         }
     }
 }
