@@ -33,25 +33,26 @@ struct LoginView: View {
             CameraScannerView(onScan: handleScan)
                 .frame(width: 480, height: 320)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-
-            VStack {
-                HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(.white)
-                            .shadow(radius: 4)
+                .overlay {
+                    VStack {
+                        HStack {
+                            Button { dismiss() } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                                    .shadow(radius: 4)
+                            }
+                            Spacer()
+                        }
+                        Spacer()
+                        HStack(spacing: 12) {
+                            Button { sheet = .credential(.login) } label: { smallButton("昵称登录") }
+                            Button { sheet = .credential(.recover) } label: { smallButton("账号找回") }
+                        }
+                        .padding(.bottom, 12)
                     }
-                    Spacer()
+                    .padding(10)
                 }
-                Spacer()
-                HStack(spacing: 12) {
-                    Button { sheet = .credential(.login) } label: { smallButton("昵称登录") }
-                    Button { sheet = .credential(.recover) } label: { smallButton("找回账号") }
-                }
-                .padding(.bottom, 24)
-            }
-            .padding()
         }
         .sheet(item: $sheet) { s in
             switch s {
@@ -123,7 +124,7 @@ private struct CredentialSheet: View {
                         .frame(maxWidth: .infinity)
                 }
             }
-            .navigationTitle(mode == .login ? "昵称登录" : "找回账号")
+            .navigationTitle(mode == .login ? "昵称登录" : "账号找回")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
