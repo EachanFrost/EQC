@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 队列里的一条：单人 / 可拼机 / 双人组，附带拼机、加入、取消动作。
+/// 队列里的一条：单人 / 可拼机 / 双人组，附带上移、下移、拼机、加入、取消动作。
 struct QueueRowView: View {
     let index: Int
     let item: QueueItem
@@ -29,6 +29,17 @@ struct QueueRowView: View {
                 }
             }
             Spacer()
+            HStack(spacing: 0) {
+                Button { queueManager.moveQueueItem(item: item, up: true) } label: {
+                    Image(systemName: "chevron.up").font(.caption2)
+                }
+                .buttonStyle(.borderless)
+
+                Button { queueManager.moveQueueItem(item: item, up: false) } label: {
+                    Image(systemName: "chevron.down").font(.caption2)
+                }
+                .buttonStyle(.borderless)
+            }
             if item.type == QueueItemType.duoMatch.rawValue {
                 Button("拼机", action: onPair).buttonStyle(.bordered).font(.caption2)
             } else if item.type == QueueItemType.duoGroup.rawValue && !queueManager.hasSecondMember(item) {

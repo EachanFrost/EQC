@@ -265,6 +265,20 @@ final class QueueManager: ObservableObject {
         save()
     }
 
+    /// 在队列中上移/下移该条目（交换 joinedAt）。
+    func moveQueueItem(item: QueueItem, up: Bool) {
+        let side = item.machineId
+        let waiting = waitingItems(for: side)
+        guard let index = waiting.firstIndex(where: { $0.uid == item.uid }) else { return }
+        let targetIndex = up ? index - 1 : index + 1
+        guard targetIndex >= 0, targetIndex < waiting.count else { return }
+        let target = waiting[targetIndex]
+        let tmp = item.joinedAt
+        item.joinedAt = target.joinedAt
+        target.joinedAt = tmp
+        save()
+    }
+
     // MARK: - 调度
 
     func scheduleIfIdle(side: MachineSide) {

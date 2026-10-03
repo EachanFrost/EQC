@@ -7,24 +7,13 @@ private enum CredentialMode: String, Identifiable {
     var id: String { rawValue }
 }
 
-private enum LoginSheet: Identifiable {
-    case credential(CredentialMode)
-    case joinQueue(Player)
-
-    var id: String {
-        switch self {
-        case .credential: return "credential"
-        case .joinQueue: return "joinQueue"
-        }
-    }
-}
-
 /// 扫码登录：屏幕中间摄像头小窗口，四周透明。
 struct LoginView: View {
     @EnvironmentObject var queueManager: QueueManager
     @Environment(\.dismiss) var dismiss
 
-    @State private var sheet: LoginSheet?
+    @State private var credentialMode: CredentialMode?
+    @State private var loggedPlayer: Player?
     @State private var message: String?
     @State private var showMessage = false
 
@@ -48,26 +37,26 @@ struct LoginView: View {
                         }
                         Spacer()
                         HStack(spacing: 12) {
-                            Button { sheet = .credential(.login) } label: { smallButton("昵称登录") }
-                            Button { sheet = .credential(.recover) } label: { smallButton("账号找回") }
+                            Button { credentialMode = .login } label: { smallButton("昵称登录") }
+                            Button { credentialMode = .recover } label: { smallButton("账号找回") }
                         }
                         .padding(.bottom, 12)
                     }
                     .padding(10)
                 }
         }
-        .sheet(item: $sheet) { s in
-            switch s {
-            case .credential(let mode):
-                CredentialSheet(mode: mode) { player in
-                    sheet = .joinQueue(player)
+        .sheet(item: $credentialMode) { mode in
+            CredentialSheet(mode: mode) { player in
+                credentialMode = nil
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    loggedPlayer = player
                 }
-            case .joinQueue(let player):
-                JoinQueueView(player: player, onFinished: {
-                    sheet = nil
-                    dismiss()
-                })
             }
+        }
+        .fullScreenCover(item: $loggedPlayer) { player in
+            JoinQueueView(player: player,
+                          onFinished: { dismiss() },
+                          onCancel: { dismiss() })
         }
         .alert("提示", isPresented: $showMessage) {
             Button("好", role: .cancel) {}
@@ -96,7 +85,7 @@ struct LoginView: View {
             showMessage = true
             return
         }
-        sheet = .joinQueue(player)
+        loggedPlayer = player
     }
 }
 

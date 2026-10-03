@@ -4,6 +4,7 @@ import SwiftUI
 struct JoinQueueView: View {
     let player: Player
     var onFinished: (() -> Void)?
+    var onCancel: (() -> Void)?
 
     @EnvironmentObject var queueManager: QueueManager
     @Environment(\.dismiss) var dismiss
@@ -44,7 +45,11 @@ struct JoinQueueView: View {
             .navigationTitle("排队")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("取消") {
+                        if let onCancel = onCancel { onCancel() } else { dismiss() }
+                    }
+                }
             }
             .confirmationDialog("与他拼机？", isPresented: $showPairPrompt, titleVisibility: .visible) {
                 Button("与他拼机") { doJoin(pairWith: pairTarget) }
