@@ -134,3 +134,15 @@ struct CameraScannerView: UIViewControllerRepresentable {
         }
     }
 }
+
+/// 让 fullScreenCover 背景透明，露出下层画面。
+struct ClearBackgroundView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        DispatchQueue.main.async {
+            view.superview?.superview?.backgroundColor = .clear
+        }
+        return view
+    }
+    func updateUIView(_ uiView: UIView, context: Context) {}
+}

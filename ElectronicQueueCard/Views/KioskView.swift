@@ -48,7 +48,7 @@ struct KioskView: View {
             case .joinGroup(let item): IdentifyView(item: item, mode: .joinGroup)
             }
         }
-        .sheet(isPresented: $showLogin) { LoginView() }
+        .fullScreenCover(isPresented: $showLogin) { LoginView().background(ClearBackgroundView()) }
         .statusBar(hidden: true)
     }
 }

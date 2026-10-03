@@ -30,6 +30,7 @@
 		CAFEBABE0000000000000314 /* QRCodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000214 /* QRCodeDisplayView.swift */; };
 		CAFEBABE0000000000000315 /* ManagedObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000215 /* ManagedObjects.swift */; };
 		CAFEBABE0000000000000401 /* QueueKiosk.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000400 /* QueueKiosk.xcdatamodeld */; };
+		CAFEBABE0000000000000601 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAFEBABE0000000000000600 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,7 @@
 		CAFEBABE0000000000000215 /* ManagedObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjects.swift; sourceTree = "<group>"; };
 		CAFEBABE0000000000000400 /* QueueKiosk.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodeld; path = QueueKiosk.xcdatamodeld; sourceTree = "<group>"; };
 		CAFEBABE0000000000000500 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CAFEBABE0000000000000600 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CAFEBABE0000000000000602 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CAFEBABE0000000000000601 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXGroup section */
 		CAFEBABE0000000000000002 = {
@@ -96,6 +109,7 @@
 				CAFEBABE0000000000000103 /* Views */,
 				CAFEBABE0000000000000400 /* QueueKiosk.xcdatamodeld */,
 				CAFEBABE0000000000000500 /* Info.plist */,
+				CAFEBABE0000000000000600 /* Assets.xcassets */,
 			);
 			path = ElectronicQueueCard;
 			sourceTree = "<group>";
@@ -159,6 +173,7 @@
 			buildPhases = (
 				CAFEBABE0000000000000020 /* Sources */,
 				CAFEBABE0000000000000021 /* Frameworks */,
+				CAFEBABE0000000000000602 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -291,6 +306,7 @@
 		CAFEBABE0000000000000034 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -299,7 +315,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = beta1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.paiqi.queuekiosk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -311,6 +327,7 @@
 		CAFEBABE0000000000000035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -319,7 +336,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = beta1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.paiqi.queuekiosk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

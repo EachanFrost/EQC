@@ -20,30 +20,29 @@ struct LoginView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 18) {
-                HStack(spacing: 12) {
-                    Button { dismiss() } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(.secondary)
+            ZStack {
+                Color.black.opacity(0.55).ignoresSafeArea()
+
+                VStack(spacing: 12) {
+                    CameraScannerView(onScan: handleScan)
+                        .frame(width: 420, height: 260)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .overlay(alignment: .topLeading) {
+                            Button { dismiss() } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                                    .shadow(radius: 4)
+                            }
+                            .padding(8)
+                        }
+
+                    HStack(spacing: 12) {
+                        Button { credentialMode = .login } label: { smallButton("昵称登录") }
+                        Button { credentialMode = .recover } label: { smallButton("找回账号") }
                     }
-                    Text("扫码登录").font(.title2.bold())
-                    Spacer()
-                }
-
-                CameraScannerView(onScan: handleScan)
-                    .frame(width: 420, height: 260)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.secondary.opacity(0.4), lineWidth: 1))
-
-                Text("请将手机二维码对准屏幕").font(.footnote).foregroundColor(.secondary)
-
-                HStack(spacing: 12) {
-                    Button { credentialMode = .login } label: { smallButton("昵称登录") }
-                    Button { credentialMode = .recover } label: { smallButton("找回账号") }
                 }
             }
-            .padding()
             .navigationBarHidden(true)
             .background(
                 NavigationLink(
@@ -72,8 +71,8 @@ struct LoginView: View {
             .font(.footnote)
             .padding(.horizontal, 18)
             .padding(.vertical, 9)
-            .background(Color.secondary.opacity(0.18))
-            .foregroundColor(.primary)
+            .background(Color.white.opacity(0.92))
+            .foregroundColor(.black)
             .clipShape(Capsule())
     }
 
